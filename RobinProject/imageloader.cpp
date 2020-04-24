@@ -67,14 +67,17 @@ texture_library * getButtonLibrary()
 	auto tlib = new texture_library();
 	auto img = new sf::Image();
 
-	img->loadFromFile("img/cc_btn_pane.png");
+	img->loadFromFile("img/cc_screen.png");
+	createTextureAndAdd(tlib, img, "screen", 0, 0, 800, 600);
+
+	/*img->loadFromFile("img/cc_btn_pane.png");
 	createTextureAndAdd(tlib, img, "btn_pane", 0, 0, 200, 516);
 	
 	img->loadFromFile("img/kreature_title.png");
 	createTextureAndAdd(tlib, img, "kreature_title", 0, 0, 300, 200);
 
 	img->loadFromFile("img/colors.png");
-	createTextureAndAdd(tlib, img, "colors", 0, 0, 300, 200);
+	createTextureAndAdd(tlib, img, "colors", 0, 0, 300, 200);*/
 
 	return tlib;
 }

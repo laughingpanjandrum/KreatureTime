@@ -1,7 +1,12 @@
 #include "pch.h"
 #include "charcreation.h"
-#include "drawing.h"
 
+
+int randrange(const int v, mt19937 * rng)
+{
+	uniform_int_distribution<int> rng_range(0, v - 1);
+	return rng_range(*rng);
+}
 
 void loopCharacterFeature(gamedataPtr gdata, const unsigned layer_index, vector<texturePtr>* txlist, int * idx, int vec)
 {
@@ -15,16 +20,23 @@ void loopCharacterFeature(gamedataPtr gdata, const unsigned layer_index, vector<
 
 
 
-
 void charCreationLoop(gamedataPtr gdata)
 {
 	bool done = false;
 	sf::Event event;
 
+
+	//	Randomizer
+	uniform_int_distribution<int> randomColorRange(0, 255);
+	random_device rd;
+	mt19937 randomNumbers(rd());
+
+
+
 	//	texture library for the player character
 	auto tlib = getCreatureLibrary();
 	gdata->pimage->setBodyTexture(getTextureByLabel(tlib, "base"));
-	gdata->pimage->setPosition(100, 50);
+	gdata->pimage->setPosition(215, 60);
 
 	//	test: final rendered dude
 	sf::Sprite finaldude;
@@ -60,27 +72,10 @@ void charCreationLoop(gamedataPtr gdata)
 	int idx_bangs = 0;
 
 
-	//	a little title img
-	auto tlib_btns = getButtonLibrary();
-	auto title_sprite = sf::Sprite(*getTextureByLabel(tlib_btns, "kreature_title"));
-	title_sprite.setPosition(100, 400);
-
-
-	//	buttons for changing stuff
-	auto btn_pane = sf::Sprite(*getTextureByLabel(tlib_btns, "btn_pane"));
-	btn_pane.setPosition(500, -50);
-	btn_pane.setOrigin(0, 0);
-
-
-	//	for colour swapping
-	auto col_pane = sf::Sprite(*getTextureByLabel(tlib_btns, "colors"));
-	col_pane.setPosition(450, 390);
-	col_pane.setOrigin(0, 0);
-
-
-	//	for catching clicks in the button pane
-	auto bpane_rect = btn_pane.getGlobalBounds();
-	auto cpane_rect = col_pane.getGlobalBounds();
+	//	bg
+	auto btn_tlib = getButtonLibrary();
+	auto bg = sf::Sprite(*getTextureByLabel(btn_tlib, "screen"));
+	auto bg_img = bg.getTexture()->copyToImage();
 
 
 	//	default hair colours
@@ -114,83 +109,100 @@ void charCreationLoop(gamedataPtr gdata)
 			{
 				//	figure out what part of the button pane we clicked on, if any
 				auto mpos = sf::Mouse::getPosition(*gdata->rwindow);
-				int xoffs = mpos.x - bpane_rect.left;
-				int yoffs = mpos.y - bpane_rect.top;
+				int x = mpos.x;
+				int y = mpos.y;
 
 				//	EYES BUTTONS
-				if (yoffs >= 95 && yoffs <= 145)
+				if (y >= 55 && y <= 100)
 				{
-					if (xoffs >= 0 && xoffs <= 75)
+					if (x >= 510 && x <= 550)
 						loopCharacterFeature(gdata, head_layer::LAYER_EYES, &tx_eyes, &idx_eyes, -1);
-					else if (xoffs >= 140 && xoffs <= 180)
+					else if (x >= 650 && x <= 700)
 						loopCharacterFeature(gdata, head_layer::LAYER_EYES, &tx_eyes, &idx_eyes, 1);
 				}
 
 				//	NOSE BUTTONS
-				else if (yoffs >= 150 && yoffs <= 195)
+				else if (y >= 105 && y <= 145)
 				{
-					if (xoffs >= 0 && xoffs <= 75)
+					if (x >= 510 && x <= 550)
 						loopCharacterFeature(gdata, head_layer::LAYER_NOSE, &tx_noses, &idx_noses, -1);
-					else if (xoffs >= 140 && xoffs <= 180)
+					else if (x >= 650 && x <= 700)
 						loopCharacterFeature(gdata, head_layer::LAYER_NOSE, &tx_noses, &idx_noses, 1);
 				}
 
 				//	MOUTH BUTTONS
-				else if (yoffs >= 220 && yoffs <= 260)
+				else if (y >= 170 && y <= 210)
 				{
-					if (xoffs >= 0 && xoffs <= 75)
+					if (x >= 510 && x <= 550)
 						loopCharacterFeature(gdata, head_layer::LAYER_MOUTH, &tx_mouths, &idx_mouths, -1);
-					else if (xoffs >= 140 && xoffs <= 180)
+					else if (x >= 650 && x <= 700)
 						loopCharacterFeature(gdata, head_layer::LAYER_MOUTH, &tx_mouths, &idx_mouths, 1);
 				}
 
 				//	EYEBROW BUTTONS
-				else if (yoffs >= 265 && yoffs <= 305)
+				else if (y >= 220 && y <= 260)
 				{
-					if (xoffs >= 0 && xoffs <= 20)
+					if (x >= 510 && x <= 550)
 						loopCharacterFeature(gdata, head_layer::LAYER_EYEBROWS, &tx_brows, &idx_brows, -1);
-					else if (xoffs >= 175 && xoffs <= 200)
+					else if (x >= 650 && x <= 700)
 						loopCharacterFeature(gdata, head_layer::LAYER_EYEBROWS, &tx_brows, &idx_brows, 1);
 				}
 
 				//	HAIR BUTTONS
-				else if (yoffs >= 330 && yoffs <= 370)
+				else if (y >= 280 && y <= 320)
 				{
-					if (xoffs >= 0 && xoffs <= 40)
+					if (x >= 520 && x <= 550)
 						loopCharacterFeature(gdata, head_layer::LAYER_HAIR, &tx_hair, &idx_hair, -1);
-					else if (xoffs >= 145 && xoffs <= 180)
+					else if (x >= 660 && x <= 695)
 						loopCharacterFeature(gdata, head_layer::LAYER_HAIR, &tx_hair, &idx_hair, 1);
 				}
 
 				//	BANGS BUTTONS
-				else if (yoffs >= 380 && yoffs <= 420)
+				else if (y >= 335 && y <= 375)
 				{
-					if (xoffs >= 0 && xoffs <= 40)
+					if (x >= 520 && x <= 560)
 						loopCharacterFeature(gdata, head_layer::LAYER_BANGS, &tx_bangs, &idx_bangs, -1);
-					else if (xoffs >= 155 && xoffs <= 195)
+					else if (x >= 670 && x <= 705)
 						loopCharacterFeature(gdata, head_layer::LAYER_BANGS, &tx_bangs, &idx_bangs, 1);
 				}
 
 
 				//	clicking in the colour pane sets the colour of hair+bangs
-				xoffs = mpos.x - cpane_rect.left;
-				yoffs = mpos.y - cpane_rect.top;
-				if (xoffs >= 0 && xoffs <= 300 && yoffs >= 0 && yoffs <= 200)
+				else if (x >= 0 && x <= 665 && y >= 400 && y <= 535)
 				{
-					auto img = col_pane.getTexture()->copyToImage();
-					auto px = img.getPixel(xoffs, yoffs);
+					auto px = bg_img.getPixel(x, y);
 					gdata->pimage->tintLayer(head_layer::LAYER_HAIR, px);
 					gdata->pimage->tintLayer(head_layer::LAYER_BANGS, px);
+				}
+
+
+				//	RANDOMIZE THE CREATURE
+				else if (x >= 20 && x <= 170 && y >= 175 && y <= 330)
+				{
+					idx_eyes = randrange(tx_eyes.size(), &randomNumbers);
+					idx_noses = randrange(tx_noses.size(), &randomNumbers);
+					idx_mouths = randrange(tx_mouths.size(), &randomNumbers);
+					idx_brows = randrange(tx_brows.size(), &randomNumbers);
+					idx_hair = randrange(tx_hair.size(), &randomNumbers);
+					idx_bangs = randrange(tx_bangs.size(), &randomNumbers);
+					gdata->pimage->setLayerTexture(head_layer::LAYER_EYES, tx_eyes[idx_eyes]);
+					gdata->pimage->setLayerTexture(head_layer::LAYER_NOSE, tx_noses[idx_noses]);
+					gdata->pimage->setLayerTexture(head_layer::LAYER_MOUTH, tx_mouths[idx_mouths]);
+					gdata->pimage->setLayerTexture(head_layer::LAYER_EYEBROWS, tx_brows[idx_brows]);
+					gdata->pimage->setLayerTexture(head_layer::LAYER_HAIR, tx_hair[idx_hair]);
+					gdata->pimage->setLayerTexture(head_layer::LAYER_BANGS, tx_bangs[idx_bangs]);
+
+					sf::Color col(randrange(256, &randomNumbers), randrange(256, &randomNumbers), randrange(256, &randomNumbers));
+					gdata->pimage->tintLayer(head_layer::LAYER_HAIR, col);
+					gdata->pimage->tintLayer(head_layer::LAYER_BANGS, col);
 				}
 			}
 		}
 
 		//	render the window
 		gdata->rwindow->clear(sf::Color(255, 255, 255));
+		gdata->rwindow->draw(bg);
 		renderActor(gdata->rwindow, gdata->pimage);
-		gdata->rwindow->draw(btn_pane);
-		gdata->rwindow->draw(col_pane);
-		gdata->rwindow->draw(title_sprite);
 		gdata->rwindow->display();
 	}
 }
