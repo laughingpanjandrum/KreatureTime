@@ -18,7 +18,7 @@ namespace head_layer
 }
 
 
-
+//	For character creation: contains all the layers of the Kreature, and can render them down into a single RenderTexture for convenience
 class player_image
 {
 public:

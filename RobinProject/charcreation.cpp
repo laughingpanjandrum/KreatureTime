@@ -20,10 +20,32 @@ void loopCharacterFeature(gamedataPtr gdata, const unsigned layer_index, vector<
 
 
 
+//	Renders the character's layers into a single texture, which is then set to the 'playerSprite' object in gamedata.
+void finishCharacter(gamedataPtr gdata)
+{
+	//	create the player sprite
+	gdata->playerSprite = spritePtr(new sf::Sprite());
+
+	//	render the texture
+	auto rtx = gdata->pimage->flatten();
+	gdata->playerTexture = texturePtr(new sf::Texture(rtx->getTexture()));
+	gdata->playerSprite->setTexture(*gdata->playerTexture);
+}
+
+
+
 void charCreationLoop(gamedataPtr gdata)
 {
 	bool done = false;
 	sf::Event event;
+
+
+	//	Set up a textbox for naming
+	sf::Text name_text_box;
+	name_text_box.setFont(gdata->usefont);
+	name_text_box.setCharacterSize(30);
+	name_text_box.setColor(sf::Color(0, 0, 0));
+	name_text_box.setPosition(65, 550);
 
 
 	//	Randomizer
@@ -38,10 +60,6 @@ void charCreationLoop(gamedataPtr gdata)
 	gdata->pimage->setBodyTexture(getTextureByLabel(tlib, "base"));
 	gdata->pimage->setPosition(215, 60);
 
-	//	test: final rendered dude
-	sf::Sprite finaldude;
-	finaldude.setTexture(*getTextureByLabel(tlib, "base"));
-	finaldude.setPosition(600, 300);
 
 	//	tables of image options
 	vector<texturePtr> tx_eyes = { getTextureByLabel(tlib, "empty") };
@@ -95,12 +113,31 @@ void charCreationLoop(gamedataPtr gdata)
 
 			if (event.type == sf::Event::EventType::KeyPressed)
 			{
-				if (event.key.code == sf::Keyboard::Escape)
-					done = true;
-				else if (event.key.code == sf::Keyboard::Return)
+				//	flatten all layers into a single texture and conclude
+				if (event.key.code == sf::Keyboard::Return || event.key.code == sf::Keyboard::Escape)
 				{
-					auto rtx = gdata->pimage->flatten();
-					finaldude.setTexture(rtx->getTexture());
+					finishCharacter(gdata);
+					done = true;
+				}
+
+				//	backspace
+				else if (event.key.code == sf::Keyboard::BackSpace)
+				{
+					if (!gdata->playerName.isEmpty())
+					{
+						gdata->playerName = gdata->playerName.substring(0, gdata->playerName.getSize() - 1);
+						name_text_box.setString(gdata->playerName);
+					}
+				}
+			}
+
+
+			else if (event.type == sf::Event::EventType::TextEntered)
+			{
+				if (event.text.unicode >= 'A' && event.text.unicode <= 'z')
+				{
+					gdata->playerName += event.text.unicode;
+					name_text_box.setString(gdata->playerName);
 				}
 			}
 
@@ -112,8 +149,51 @@ void charCreationLoop(gamedataPtr gdata)
 				int x = mpos.x;
 				int y = mpos.y;
 
+				//	RESET THE CREATURE
+				if (inRectangle(x, y, 30, 165, 60, 165))
+				{
+					idx_eyes = 0;
+					idx_noses = 0;
+					idx_mouths = 0;
+					idx_brows = 0;
+					idx_hair = 0;
+					idx_bangs = 0;
+
+					gdata->pimage->setLayerTexture(head_layer::LAYER_EYES, tx_eyes[idx_eyes]);
+					gdata->pimage->setLayerTexture(head_layer::LAYER_NOSE, tx_noses[idx_noses]);
+					gdata->pimage->setLayerTexture(head_layer::LAYER_MOUTH, tx_mouths[idx_mouths]);
+					gdata->pimage->setLayerTexture(head_layer::LAYER_EYEBROWS, tx_brows[idx_brows]);
+					gdata->pimage->setLayerTexture(head_layer::LAYER_HAIR, tx_hair[idx_hair]);
+					gdata->pimage->setLayerTexture(head_layer::LAYER_BANGS, tx_bangs[idx_bangs]);
+
+					gdata->pimage->tintLayer(head_layer::LAYER_HAIR, sf::Color(0, 0, 0));
+					gdata->pimage->tintLayer(head_layer::LAYER_BANGS, sf::Color(0, 0, 0));
+				}
+
+
+				//	RANDOMIZE THE CREATURE
+				else if (inRectangle(x, y, 20, 195, 170, 350))
+				{
+					idx_eyes = randrange(tx_eyes.size(), &randomNumbers);
+					idx_noses = randrange(tx_noses.size(), &randomNumbers);
+					idx_mouths = randrange(tx_mouths.size(), &randomNumbers);
+					idx_brows = randrange(tx_brows.size(), &randomNumbers);
+					idx_hair = randrange(tx_hair.size(), &randomNumbers);
+					idx_bangs = randrange(tx_bangs.size(), &randomNumbers);
+					gdata->pimage->setLayerTexture(head_layer::LAYER_EYES, tx_eyes[idx_eyes]);
+					gdata->pimage->setLayerTexture(head_layer::LAYER_NOSE, tx_noses[idx_noses]);
+					gdata->pimage->setLayerTexture(head_layer::LAYER_MOUTH, tx_mouths[idx_mouths]);
+					gdata->pimage->setLayerTexture(head_layer::LAYER_EYEBROWS, tx_brows[idx_brows]);
+					gdata->pimage->setLayerTexture(head_layer::LAYER_HAIR, tx_hair[idx_hair]);
+					gdata->pimage->setLayerTexture(head_layer::LAYER_BANGS, tx_bangs[idx_bangs]);
+
+					sf::Color col(randrange(256, &randomNumbers), randrange(256, &randomNumbers), randrange(256, &randomNumbers));
+					gdata->pimage->tintLayer(head_layer::LAYER_HAIR, col);
+					gdata->pimage->tintLayer(head_layer::LAYER_BANGS, col);
+				}
+
 				//	EYES BUTTONS
-				if (y >= 55 && y <= 100)
+				else if (y >= 55 && y <= 100)
 				{
 					if (x >= 510 && x <= 550)
 						loopCharacterFeature(gdata, head_layer::LAYER_EYES, &tx_eyes, &idx_eyes, -1);
@@ -174,35 +254,14 @@ void charCreationLoop(gamedataPtr gdata)
 					gdata->pimage->tintLayer(head_layer::LAYER_HAIR, px);
 					gdata->pimage->tintLayer(head_layer::LAYER_BANGS, px);
 				}
-
-
-				//	RANDOMIZE THE CREATURE
-				else if (x >= 20 && x <= 170 && y >= 175 && y <= 330)
-				{
-					idx_eyes = randrange(tx_eyes.size(), &randomNumbers);
-					idx_noses = randrange(tx_noses.size(), &randomNumbers);
-					idx_mouths = randrange(tx_mouths.size(), &randomNumbers);
-					idx_brows = randrange(tx_brows.size(), &randomNumbers);
-					idx_hair = randrange(tx_hair.size(), &randomNumbers);
-					idx_bangs = randrange(tx_bangs.size(), &randomNumbers);
-					gdata->pimage->setLayerTexture(head_layer::LAYER_EYES, tx_eyes[idx_eyes]);
-					gdata->pimage->setLayerTexture(head_layer::LAYER_NOSE, tx_noses[idx_noses]);
-					gdata->pimage->setLayerTexture(head_layer::LAYER_MOUTH, tx_mouths[idx_mouths]);
-					gdata->pimage->setLayerTexture(head_layer::LAYER_EYEBROWS, tx_brows[idx_brows]);
-					gdata->pimage->setLayerTexture(head_layer::LAYER_HAIR, tx_hair[idx_hair]);
-					gdata->pimage->setLayerTexture(head_layer::LAYER_BANGS, tx_bangs[idx_bangs]);
-
-					sf::Color col(randrange(256, &randomNumbers), randrange(256, &randomNumbers), randrange(256, &randomNumbers));
-					gdata->pimage->tintLayer(head_layer::LAYER_HAIR, col);
-					gdata->pimage->tintLayer(head_layer::LAYER_BANGS, col);
-				}
 			}
 		}
 
 		//	render the window
-		gdata->rwindow->clear(sf::Color(255, 255, 255));
+		gdata->rwindow->clear();
 		gdata->rwindow->draw(bg);
 		renderActor(gdata->rwindow, gdata->pimage);
+		gdata->rwindow->draw(name_text_box);
 		gdata->rwindow->display();
 	}
 }

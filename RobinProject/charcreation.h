@@ -7,4 +7,5 @@
 int randrange(const int v, mt19937* rng);
 
 void loopCharacterFeature(gamedataPtr gdata, const unsigned layer_index, vector<texturePtr>* txlist, int* idx, int vec);
+void finishCharacter(gamedataPtr gdata);
 void charCreationLoop(gamedataPtr gdata);

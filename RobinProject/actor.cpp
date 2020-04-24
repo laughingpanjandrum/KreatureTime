@@ -39,8 +39,19 @@ sf::RenderTexture* player_image::flatten()
 {
 	auto rtx = new sf::RenderTexture();
 	rtx->create(200, 300);
+	rtx->clear(sf::Color(0, 0, 0, 0));
+
+	//	we need to temporarily move all our sprites so they're at zero, the origin of the new RTX
+	auto oldpos = _body->getPosition();
+	setPosition(0, 0);
+
+	//	render onto the texture
 	rtx->draw(*_body);
 	for (auto layer : _layers)
 		rtx->draw(*layer);
+	rtx->display();
+
+	//	return to our previous position
+	setPosition(oldpos.x, oldpos.y);
 	return rtx;
 }

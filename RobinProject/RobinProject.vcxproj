@@ -156,6 +156,7 @@
   <ItemGroup>
     <ClInclude Include="actor.h" />
     <ClInclude Include="charcreation.h" />
+    <ClInclude Include="charviewer.h" />
     <ClInclude Include="drawing.h" />
     <ClInclude Include="gamedata.h" />
     <ClInclude Include="imageloader.h" />
@@ -164,6 +165,7 @@
   <ItemGroup>
     <ClCompile Include="actor.cpp" />
     <ClCompile Include="charcreation.cpp" />
+    <ClCompile Include="charviewer.cpp" />
     <ClCompile Include="drawing.cpp" />
     <ClCompile Include="imageloader.cpp" />
     <ClCompile Include="pch.cpp">

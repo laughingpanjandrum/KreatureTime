@@ -11,6 +11,7 @@
 #include "drawing.h"
 #include "gamedata.h"
 #include "charcreation.h"
+#include "charviewer.h"
 
 using namespace std;
 
@@ -31,16 +32,19 @@ int main()
 {
 	//sf::RenderWindow renderWindow(sf::VideoMode(640, 480), "Hello SFML");
 
-	//	initrand
-	std::uniform_int_distribution<int> randomColorRange(0, 255);
-	std::random_device rd;
-	std::mt19937 randomNumbers(rd());
-
 
 	//	base game data
 	auto gdata = gamedataPtr(new gamedata());
 	gdata->pimage = new player_image();
 	gdata->rwindow = new sf::RenderWindow(sf::VideoMode(800, 600), "Kreature Time");
 
+
+	//	font to be used
+	gdata->usefont = sf::Font();
+	gdata->usefont.loadFromFile("data/Old Typewriter2.0.ttf");
+
+
+	//	character creation
 	charCreationLoop(gdata);
+	charViewerLoop(gdata);
 }

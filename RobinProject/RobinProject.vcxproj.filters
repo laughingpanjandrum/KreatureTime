@@ -33,6 +33,9 @@
     <ClInclude Include="gamedata.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="charviewer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -51,6 +54,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="charcreation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="charviewer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
