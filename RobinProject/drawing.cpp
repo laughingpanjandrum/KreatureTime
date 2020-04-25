@@ -56,6 +56,18 @@ void drawButtonList(sf::RenderWindow* rwindow, vector<buttonPtr>* blist, sf::Vec
 }
 
 
+//	Create a new text element
+sf::Text * createTextElement(sf::Font * font, string txt, int x, int y, sf::Color color, int sz)
+{
+	auto tbox = new sf::Text();
+	tbox->setFont(*font);
+	tbox->setString(txt);
+	tbox->setPosition(x, y);
+	tbox->setColor(color);
+	tbox->setCharacterSize(sz);
+	return tbox;
+}
+
 void renderActor(sf::RenderWindow * rwindow, player_image * pimage)
 {
 	//	the actor's BODY is rendered first, then each of their layers

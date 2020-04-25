@@ -155,7 +155,7 @@ void charCreationLoop(gamedataPtr gdata)
 
 			else if (event.type == sf::Event::EventType::TextEntered)
 			{
-				if (event.text.unicode >= 'A' && event.text.unicode <= 'z')
+				if ((event.text.unicode >= 'A' && event.text.unicode <= 'z') || event.text.unicode == ' ')
 				{
 					//	if we haven't started typing a name yet, clear the existing name
 					if (!startedName)
@@ -164,8 +164,13 @@ void charCreationLoop(gamedataPtr gdata)
 						gdata->playerName = "";
 						name_text_box.setColor(sf::Color(0, 0, 0));
 					}
-					gdata->playerName += event.text.unicode;
-					name_text_box.setString(gdata->playerName);
+
+					//	limit length of name
+					if (gdata->playerName.getSize() < 12)
+					{
+						gdata->playerName += event.text.unicode;
+						name_text_box.setString(gdata->playerName);
+					}
 				}
 			}
 

@@ -29,5 +29,9 @@ void drawButtonList(sf::RenderWindow* rwindow, vector<buttonPtr>* blist, sf::Vec
 
 
 
+//	Text
+sf::Text* createTextElement(sf::Font* font, string txt, int x, int y, sf::Color color = sf::Color(0, 0, 0), int sz = 30);
 
+
+//	Character drawing
 void renderActor(sf::RenderWindow* rwindow, player_image* pimage);

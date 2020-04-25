@@ -85,7 +85,12 @@ texture_library * getStatSelectionLibrary()
 	auto tlib = new texture_library();
 	auto img = new sf::Image();
 
+	img->loadFromFile("img/cc_mirror.png");
+	createTextureAndAdd(tlib, img, "bg", 0, 0, 800, 600);
 
+	img->loadFromFile("img/cc_mirror_buttons.png");
+	createTextureAndAdd(tlib, img, "btn_circle1", 575, 450, 80, 70);
+	createTextureAndAdd(tlib, img, "btn_circle2", 690, 490, 110, 105);
 
 	return tlib;
 }
