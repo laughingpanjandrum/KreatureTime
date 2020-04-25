@@ -31,7 +31,7 @@ void looplayer(player_image* pimage, const unsigned layer_idx, vector<texturePtr
 int main()
 {
 	//sf::RenderWindow renderWindow(sf::VideoMode(640, 480), "Hello SFML");
-
+	initrand();
 
 	//	base game data
 	auto gdata = gamedataPtr(new gamedata());

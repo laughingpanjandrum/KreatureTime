@@ -155,15 +155,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="actor.h" />
+    <ClInclude Include="attributes.h" />
     <ClInclude Include="charcreation.h" />
     <ClInclude Include="charviewer.h" />
     <ClInclude Include="drawing.h" />
     <ClInclude Include="gamedata.h" />
     <ClInclude Include="imageloader.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="random.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="actor.cpp" />
+    <ClCompile Include="attributes.cpp" />
     <ClCompile Include="charcreation.cpp" />
     <ClCompile Include="charviewer.cpp" />
     <ClCompile Include="drawing.cpp" />
@@ -174,6 +177,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="random.cpp" />
     <ClCompile Include="SFMLTest.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

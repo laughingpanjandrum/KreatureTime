@@ -2,12 +2,8 @@
 #include "charcreation.h"
 
 
-int randrange(const int v, mt19937 * rng)
-{
-	uniform_int_distribution<int> rng_range(0, v - 1);
-	return rng_range(*rng);
-}
 
+//	Cycles through a character feature list.
 void loopCharacterFeature(gamedataPtr gdata, const unsigned layer_index, vector<texturePtr>* txlist, int * idx, int vec)
 {
 	(*idx) += vec;
@@ -23,6 +19,9 @@ void loopCharacterFeature(gamedataPtr gdata, const unsigned layer_index, vector<
 //	Renders the character's layers into a single texture, which is then set to the 'playerSprite' object in gamedata.
 void finishCharacter(gamedataPtr gdata)
 {
+	//	player object
+	gdata->playerData = playerdataPtr(new playerdata());
+
 	//	create the player sprite
 	gdata->playerSprite = spritePtr(new sf::Sprite());
 
@@ -44,15 +43,10 @@ void charCreationLoop(gamedataPtr gdata)
 	sf::Text name_text_box;
 	name_text_box.setFont(gdata->usefont);
 	name_text_box.setCharacterSize(30);
-	name_text_box.setColor(sf::Color(0, 0, 0));
-	name_text_box.setPosition(65, 550);
-
-
-	//	Randomizer
-	uniform_int_distribution<int> randomColorRange(0, 255);
-	random_device rd;
-	mt19937 randomNumbers(rd());
-
+	name_text_box.setColor(sf::Color(120, 120, 120));
+	name_text_box.setPosition(85, 540);
+	name_text_box.setString("Enter Name");
+	bool startedName = false;
 
 
 	//	texture library for the player character
@@ -91,7 +85,7 @@ void charCreationLoop(gamedataPtr gdata)
 
 
 	//	bg
-	auto btn_tlib = getButtonLibrary();
+	auto btn_tlib = getCharCreationLibrary();
 	auto bg = sf::Sprite(*getTextureByLabel(btn_tlib, "screen"));
 	auto bg_img = bg.getTexture()->copyToImage();
 
@@ -99,6 +93,33 @@ void charCreationLoop(gamedataPtr gdata)
 	//	default hair colours
 	gdata->pimage->tintLayer(head_layer::LAYER_BANGS, sf::Color(0, 0, 0));
 	gdata->pimage->tintLayer(head_layer::LAYER_HAIR, sf::Color(0, 0, 0));
+
+
+	//	this is just a fun little feature for Robin
+	sf::Sprite qmark;
+	qmark.setTexture(*getTextureByLabel(btn_tlib, "question"));
+	qmark.setPosition(755, 530);
+
+
+	//	list of buttons appearing
+	vector<buttonPtr> buttons;
+	
+	createButton(&buttons, "btn_reset",			40, 65, 140, 110, getTextureByLabel(btn_tlib, "btn_reset"));
+	createButton(&buttons, "btn_randomize",		33, 180, 150, 150, getTextureByLabel(btn_tlib, "btn_randomize"));
+	createButton(&buttons, "btn_begin",			595, 520, 205, 70, getTextureByLabel(btn_tlib, "btn_accept"));
+	
+	createButton(&buttons, "btn_sight_l",		640, 45,  50, 50, getTextureByLabel(btn_tlib, "btn_arrow"));
+	createButton(&buttons, "btn_sight_r",		500, 45,  50, 50, getTextureByLabel(btn_tlib, "btn_arrow"));
+	createButton(&buttons, "btn_smell_l",		505, 95,  50, 50, getTextureByLabel(btn_tlib, "btn_arrow"));
+	createButton(&buttons, "btn_smell_r",		640, 95,  50, 50, getTextureByLabel(btn_tlib, "btn_arrow"));
+	createButton(&buttons, "btn_taste_l",		505, 160, 50, 50, getTextureByLabel(btn_tlib, "btn_arrow"));
+	createButton(&buttons, "btn_taste_r",		640, 160, 50, 50, getTextureByLabel(btn_tlib, "btn_arrow"));
+	createButton(&buttons, "btn_expression_l",	485, 210, 50, 50, getTextureByLabel(btn_tlib, "btn_arrow"));
+	createButton(&buttons, "btn_expression_r",	670, 210, 50, 50, getTextureByLabel(btn_tlib, "btn_arrow"));
+	createButton(&buttons, "btn_style_l",		505, 270, 50, 50, getTextureByLabel(btn_tlib, "btn_arrow"));
+	createButton(&buttons, "btn_style_r",		645, 270, 50, 50, getTextureByLabel(btn_tlib, "btn_arrow"));
+	createButton(&buttons, "btn_fringe_l",		510, 325, 50, 50, getTextureByLabel(btn_tlib, "btn_arrow"));
+	createButton(&buttons, "btn_fringe_r",		660, 325, 50, 50, getTextureByLabel(btn_tlib, "btn_arrow"));
 
 
 	//	the character creation loop
@@ -123,7 +144,7 @@ void charCreationLoop(gamedataPtr gdata)
 				//	backspace
 				else if (event.key.code == sf::Keyboard::BackSpace)
 				{
-					if (!gdata->playerName.isEmpty())
+					if (!gdata->playerName.isEmpty() && startedName)
 					{
 						gdata->playerName = gdata->playerName.substring(0, gdata->playerName.getSize() - 1);
 						name_text_box.setString(gdata->playerName);
@@ -136,6 +157,13 @@ void charCreationLoop(gamedataPtr gdata)
 			{
 				if (event.text.unicode >= 'A' && event.text.unicode <= 'z')
 				{
+					//	if we haven't started typing a name yet, clear the existing name
+					if (!startedName)
+					{
+						startedName = true;
+						gdata->playerName = "";
+						name_text_box.setColor(sf::Color(0, 0, 0));
+					}
 					gdata->playerName += event.text.unicode;
 					name_text_box.setString(gdata->playerName);
 				}
@@ -146,111 +174,104 @@ void charCreationLoop(gamedataPtr gdata)
 			{
 				//	figure out what part of the button pane we clicked on, if any
 				auto mpos = sf::Mouse::getPosition(*gdata->rwindow);
-				int x = mpos.x;
-				int y = mpos.y;
+				auto btn = getButtonUnderPoint(mpos.x, mpos.y, &buttons);
 
-				//	RESET THE CREATURE
-				if (inRectangle(x, y, 30, 165, 60, 165))
+				if (btn != nullptr)
 				{
-					idx_eyes = 0;
-					idx_noses = 0;
-					idx_mouths = 0;
-					idx_brows = 0;
-					idx_hair = 0;
-					idx_bangs = 0;
+					//	RESET THE CREATURE
+					if (btn->_id == "btn_reset")
+					{
+						idx_eyes = 0;
+						idx_noses = 0;
+						idx_mouths = 0;
+						idx_brows = 0;
+						idx_hair = 0;
+						idx_bangs = 0;
 
-					gdata->pimage->setLayerTexture(head_layer::LAYER_EYES, tx_eyes[idx_eyes]);
-					gdata->pimage->setLayerTexture(head_layer::LAYER_NOSE, tx_noses[idx_noses]);
-					gdata->pimage->setLayerTexture(head_layer::LAYER_MOUTH, tx_mouths[idx_mouths]);
-					gdata->pimage->setLayerTexture(head_layer::LAYER_EYEBROWS, tx_brows[idx_brows]);
-					gdata->pimage->setLayerTexture(head_layer::LAYER_HAIR, tx_hair[idx_hair]);
-					gdata->pimage->setLayerTexture(head_layer::LAYER_BANGS, tx_bangs[idx_bangs]);
+						gdata->pimage->setLayerTexture(head_layer::LAYER_EYES, tx_eyes[idx_eyes]);
+						gdata->pimage->setLayerTexture(head_layer::LAYER_NOSE, tx_noses[idx_noses]);
+						gdata->pimage->setLayerTexture(head_layer::LAYER_MOUTH, tx_mouths[idx_mouths]);
+						gdata->pimage->setLayerTexture(head_layer::LAYER_EYEBROWS, tx_brows[idx_brows]);
+						gdata->pimage->setLayerTexture(head_layer::LAYER_HAIR, tx_hair[idx_hair]);
+						gdata->pimage->setLayerTexture(head_layer::LAYER_BANGS, tx_bangs[idx_bangs]);
 
-					gdata->pimage->tintLayer(head_layer::LAYER_HAIR, sf::Color(0, 0, 0));
-					gdata->pimage->tintLayer(head_layer::LAYER_BANGS, sf::Color(0, 0, 0));
-				}
+						gdata->pimage->tintLayer(head_layer::LAYER_HAIR, sf::Color(0, 0, 0));
+						gdata->pimage->tintLayer(head_layer::LAYER_BANGS, sf::Color(0, 0, 0));
+					}
 
 
-				//	RANDOMIZE THE CREATURE
-				else if (inRectangle(x, y, 20, 195, 170, 350))
-				{
-					idx_eyes = randrange(tx_eyes.size(), &randomNumbers);
-					idx_noses = randrange(tx_noses.size(), &randomNumbers);
-					idx_mouths = randrange(tx_mouths.size(), &randomNumbers);
-					idx_brows = randrange(tx_brows.size(), &randomNumbers);
-					idx_hair = randrange(tx_hair.size(), &randomNumbers);
-					idx_bangs = randrange(tx_bangs.size(), &randomNumbers);
-					gdata->pimage->setLayerTexture(head_layer::LAYER_EYES, tx_eyes[idx_eyes]);
-					gdata->pimage->setLayerTexture(head_layer::LAYER_NOSE, tx_noses[idx_noses]);
-					gdata->pimage->setLayerTexture(head_layer::LAYER_MOUTH, tx_mouths[idx_mouths]);
-					gdata->pimage->setLayerTexture(head_layer::LAYER_EYEBROWS, tx_brows[idx_brows]);
-					gdata->pimage->setLayerTexture(head_layer::LAYER_HAIR, tx_hair[idx_hair]);
-					gdata->pimage->setLayerTexture(head_layer::LAYER_BANGS, tx_bangs[idx_bangs]);
+					//	RANDOMIZE THE CREATURE
+					else if (btn->_id == "btn_randomize")
+					{
+						idx_eyes = randrange(tx_eyes.size());
+						idx_noses = randrange(tx_noses.size());
+						idx_mouths = randrange(tx_mouths.size());
+						idx_brows = randrange(tx_brows.size());
+						idx_hair = randrange(tx_hair.size());
+						idx_bangs = randrange(tx_bangs.size());
+						gdata->pimage->setLayerTexture(head_layer::LAYER_EYES, tx_eyes[idx_eyes]);
+						gdata->pimage->setLayerTexture(head_layer::LAYER_NOSE, tx_noses[idx_noses]);
+						gdata->pimage->setLayerTexture(head_layer::LAYER_MOUTH, tx_mouths[idx_mouths]);
+						gdata->pimage->setLayerTexture(head_layer::LAYER_EYEBROWS, tx_brows[idx_brows]);
+						gdata->pimage->setLayerTexture(head_layer::LAYER_HAIR, tx_hair[idx_hair]);
+						gdata->pimage->setLayerTexture(head_layer::LAYER_BANGS, tx_bangs[idx_bangs]);
 
-					sf::Color col(randrange(256, &randomNumbers), randrange(256, &randomNumbers), randrange(256, &randomNumbers));
-					gdata->pimage->tintLayer(head_layer::LAYER_HAIR, col);
-					gdata->pimage->tintLayer(head_layer::LAYER_BANGS, col);
-				}
+						sf::Color col(randrange(256), randrange(256), randrange(256));
+						gdata->pimage->tintLayer(head_layer::LAYER_HAIR, col);
+						gdata->pimage->tintLayer(head_layer::LAYER_BANGS, col);
+					}
 
-				//	EYES BUTTONS
-				else if (y >= 55 && y <= 100)
-				{
-					if (x >= 510 && x <= 550)
+					//	EYES BUTTONS
+					else if (btn->_id == "btn_sight_l")
 						loopCharacterFeature(gdata, head_layer::LAYER_EYES, &tx_eyes, &idx_eyes, -1);
-					else if (x >= 650 && x <= 700)
+					else if (btn->_id == "btn_sight_r")
 						loopCharacterFeature(gdata, head_layer::LAYER_EYES, &tx_eyes, &idx_eyes, 1);
-				}
 
-				//	NOSE BUTTONS
-				else if (y >= 105 && y <= 145)
-				{
-					if (x >= 510 && x <= 550)
+					//	NOSE BUTTONS
+					else if (btn->_id == "btn_smell_l")
 						loopCharacterFeature(gdata, head_layer::LAYER_NOSE, &tx_noses, &idx_noses, -1);
-					else if (x >= 650 && x <= 700)
+					else if (btn->_id == "btn_smell_r")
 						loopCharacterFeature(gdata, head_layer::LAYER_NOSE, &tx_noses, &idx_noses, 1);
-				}
 
-				//	MOUTH BUTTONS
-				else if (y >= 170 && y <= 210)
-				{
-					if (x >= 510 && x <= 550)
+					//	MOUTH BUTTONS
+					else if (btn->_id == "btn_taste_l")
 						loopCharacterFeature(gdata, head_layer::LAYER_MOUTH, &tx_mouths, &idx_mouths, -1);
-					else if (x >= 650 && x <= 700)
+					else if (btn->_id == "btn_taste_r")
 						loopCharacterFeature(gdata, head_layer::LAYER_MOUTH, &tx_mouths, &idx_mouths, 1);
-				}
 
-				//	EYEBROW BUTTONS
-				else if (y >= 220 && y <= 260)
-				{
-					if (x >= 510 && x <= 550)
+					//	EYEBROW BUTTONS
+					else if (btn->_id == "btn_expression_l")
 						loopCharacterFeature(gdata, head_layer::LAYER_EYEBROWS, &tx_brows, &idx_brows, -1);
-					else if (x >= 650 && x <= 700)
+					else if (btn->_id == "btn_expression_r")
 						loopCharacterFeature(gdata, head_layer::LAYER_EYEBROWS, &tx_brows, &idx_brows, 1);
-				}
 
-				//	HAIR BUTTONS
-				else if (y >= 280 && y <= 320)
-				{
-					if (x >= 520 && x <= 550)
+
+					//	HAIR BUTTONS
+					else if (btn->_id == "btn_style_l")
 						loopCharacterFeature(gdata, head_layer::LAYER_HAIR, &tx_hair, &idx_hair, -1);
-					else if (x >= 660 && x <= 695)
+					else if (btn->_id == "btn_style_r")
 						loopCharacterFeature(gdata, head_layer::LAYER_HAIR, &tx_hair, &idx_hair, 1);
-				}
 
-				//	BANGS BUTTONS
-				else if (y >= 335 && y <= 375)
-				{
-					if (x >= 520 && x <= 560)
+					//	BANGS BUTTONS
+					else if (btn->_id == "btn_fringe_l")
 						loopCharacterFeature(gdata, head_layer::LAYER_BANGS, &tx_bangs, &idx_bangs, -1);
-					else if (x >= 670 && x <= 705)
+					else if (btn->_id == "btn_fringe_r")
 						loopCharacterFeature(gdata, head_layer::LAYER_BANGS, &tx_bangs, &idx_bangs, 1);
+
+
+					//	Finish creature
+					else if (btn->_id == "btn_begin")
+					{
+						finishCharacter(gdata);
+						done = true;
+					}
 				}
 
 
 				//	clicking in the colour pane sets the colour of hair+bangs
-				else if (x >= 0 && x <= 665 && y >= 400 && y <= 535)
+				else if (inRectangle(mpos.x, mpos.y, 0, 400, 665, 535))
 				{
-					auto px = bg_img.getPixel(x, y);
+					auto px = bg_img.getPixel(mpos.x, mpos.y);
 					gdata->pimage->tintLayer(head_layer::LAYER_HAIR, px);
 					gdata->pimage->tintLayer(head_layer::LAYER_BANGS, px);
 				}
@@ -259,9 +280,18 @@ void charCreationLoop(gamedataPtr gdata)
 
 		//	render the window
 		gdata->rwindow->clear();
+		auto mpos = sf::Mouse::getPosition(*gdata->rwindow);
+		
 		gdata->rwindow->draw(bg);
 		renderActor(gdata->rwindow, gdata->pimage);
 		gdata->rwindow->draw(name_text_box);
+		drawButtonList(gdata->rwindow, &buttons, mpos);
+
+		//	only draw the question mark if we haven't highlighted the 'begin' button
+		auto mbtn = getButtonUnderPoint(mpos.x, mpos.y, &buttons);
+		if (mbtn == nullptr || mbtn->_id != "btn_begin")
+			gdata->rwindow->draw(qmark);
+		
 		gdata->rwindow->display();
 	}
 }

@@ -55,3 +55,26 @@ sf::RenderTexture* player_image::flatten()
 	setPosition(oldpos.x, oldpos.y);
 	return rtx;
 }
+
+
+playerdata::playerdata()
+{
+	//	blank attribute values
+	for (unsigned i = 0; i < ATTR__MAX; i++)
+		_attributes.push_back(1);
+}
+
+void playerdata::setAttributeValue(const unsigned attr, int v)
+{
+	_attributes[attr] = v;
+}
+
+const int playerdata::getAttributeValue(const unsigned attr)
+{
+	return _attributes[attr];
+}
+
+void playerdata::adjustAttribute(const unsigned attr, int adj)
+{
+	_attributes[attr] += adj;
+}

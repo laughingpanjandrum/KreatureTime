@@ -62,7 +62,7 @@ texture_library * getCreatureLibrary()
 	return tlib;
 }
 
-texture_library * getButtonLibrary()
+texture_library * getCharCreationLibrary()
 {
 	auto tlib = new texture_library();
 	auto img = new sf::Image();
@@ -70,14 +70,22 @@ texture_library * getButtonLibrary()
 	img->loadFromFile("img/cc_screen.png");
 	createTextureAndAdd(tlib, img, "screen", 0, 0, 800, 600);
 
-	/*img->loadFromFile("img/cc_btn_pane.png");
-	createTextureAndAdd(tlib, img, "btn_pane", 0, 0, 200, 516);
-	
-	img->loadFromFile("img/kreature_title.png");
-	createTextureAndAdd(tlib, img, "kreature_title", 0, 0, 300, 200);
+	img->loadFromFile("img/cc_buttons.png");
+	createTextureAndAdd(tlib, img, "btn_reset", 40, 65, 140, 110);
+	createTextureAndAdd(tlib, img, "btn_randomize", 33, 180, 150, 150);
+	createTextureAndAdd(tlib, img, "btn_arrow", 496, 44, 60, 60);
+	createTextureAndAdd(tlib, img, "btn_accept", 595, 520, 205, 70);
+	createTextureAndAdd(tlib, img, "question", 755, 465, 35, 45);
 
-	img->loadFromFile("img/colors.png");
-	createTextureAndAdd(tlib, img, "colors", 0, 0, 300, 200);*/
+	return tlib;
+}
+
+texture_library * getStatSelectionLibrary()
+{
+	auto tlib = new texture_library();
+	auto img = new sf::Image();
+
+
 
 	return tlib;
 }

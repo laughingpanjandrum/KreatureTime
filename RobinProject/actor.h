@@ -1,8 +1,8 @@
 #pragma once
 
-
+#include "attributes.h"
 #include "imageloader.h"
-
+#include "random.h"
 
 
 namespace head_layer
@@ -49,3 +49,26 @@ public:
 	spritePtr _body;
 	vector<spritePtr> _layers;
 };
+
+
+
+
+//	Player statistics
+class playerdata
+{
+public:
+
+	playerdata();
+	~playerdata() {}
+
+	void setAttributeValue(const unsigned attr, int v);
+	const int getAttributeValue(const unsigned attr);
+
+	void adjustAttribute(const unsigned attr, int adj);
+
+private:
+
+	vector<int> _attributes;
+
+};
+typedef shared_ptr<playerdata> playerdataPtr;
