@@ -158,7 +158,9 @@
     <ClInclude Include="attributes.h" />
     <ClInclude Include="charcreation.h" />
     <ClInclude Include="charviewer.h" />
+    <ClInclude Include="dialogue.h" />
     <ClInclude Include="drawing.h" />
+    <ClInclude Include="fileloader.h" />
     <ClInclude Include="gamedata.h" />
     <ClInclude Include="imageloader.h" />
     <ClInclude Include="pch.h" />
@@ -169,7 +171,9 @@
     <ClCompile Include="attributes.cpp" />
     <ClCompile Include="charcreation.cpp" />
     <ClCompile Include="charviewer.cpp" />
+    <ClCompile Include="dialogue.cpp" />
     <ClCompile Include="drawing.cpp" />
+    <ClCompile Include="fileloader.cpp" />
     <ClCompile Include="imageloader.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

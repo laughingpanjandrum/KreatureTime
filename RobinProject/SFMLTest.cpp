@@ -12,6 +12,8 @@
 #include "gamedata.h"
 #include "charcreation.h"
 #include "charviewer.h"
+#include "fileloader.h"
+#include "dialogue.h"
 
 using namespace std;
 
@@ -44,7 +46,15 @@ int main()
 	gdata->usefont.loadFromFile("data/Old Typewriter2.0.ttf");
 
 
+	//	dialogue loader test
+	dialogueLoader::loadFile("test1.d", &gdata->dman);
+
+
 	//	character creation
 	charCreationLoop(gdata);
-	charViewerLoop(gdata);
+	//charViewerLoop(gdata);
+
+	auto d = getDialogueById(&gdata->dman, "test1");
+	gdata->currentDialogue = d;
+	dialogueLoop(gdata);
 }

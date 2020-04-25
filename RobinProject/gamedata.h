@@ -2,6 +2,7 @@
 
 #include "actor.h"
 #include "attributes.h"
+#include "fileloader.h"
 
 
 
@@ -21,6 +22,9 @@ struct gamedata
 	playerdataPtr playerData;
 
 
-	//	Randomizer
+	//	Dialogue
+	dialogueManager dman;
+	dialoguePtr currentDialogue;
+
 };
 typedef shared_ptr<gamedata> gamedataPtr;

@@ -94,3 +94,16 @@ texture_library * getStatSelectionLibrary()
 
 	return tlib;
 }
+
+texture_library * getNPCLibrary()
+{
+	auto tlib = new texture_library();
+	auto img = new sf::Image();
+
+	img->loadFromFile("img/npc.png");
+	createTextureAndAdd(tlib, img, "reggie_p", 200, 0);
+	createTextureAndAdd(tlib, img, "olivia_hairless", 400, 0);
+	createTextureAndAdd(tlib, img, "olivia_hair", 600, 0);
+
+	return tlib;
+}

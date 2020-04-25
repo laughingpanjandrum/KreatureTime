@@ -44,6 +44,9 @@ texturePtr getTextureFromImage(sf::Image* img, const int x, const int y, const i
 
 
 //	generating texture libraries
+
 texture_library* getCreatureLibrary();
 texture_library* getCharCreationLibrary();
 texture_library* getStatSelectionLibrary();
+
+texture_library* getNPCLibrary();
