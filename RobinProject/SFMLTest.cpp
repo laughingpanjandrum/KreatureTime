@@ -14,18 +14,18 @@
 #include "charviewer.h"
 #include "fileloader.h"
 #include "dialogue.h"
+#include "exploration.h"
 
 using namespace std;
 
 
 
-
-void looplayer(player_image* pimage, const unsigned layer_idx, vector<texturePtr>* txlist, int* idx)
+void loadingscreen(gamedataPtr gdata)
 {
-	(*idx)++;
-	if (*idx >= txlist->size())
-		*idx = 0;
-	pimage->setLayerTexture(layer_idx, txlist->at(*idx));
+	auto tx = createTextElement(&gdata->usefont, "Loading", 350, 350);
+	gdata->rwindow->clear(sf::Color(255, 255, 255));
+	gdata->rwindow->draw(*tx);
+	gdata->rwindow->display();
 }
 
 
@@ -46,15 +46,27 @@ int main()
 	gdata->usefont.loadFromFile("data/Old Typewriter2.0.ttf");
 
 
-	//	dialogue loader test
+	//	loading game data
 	dialogueLoader::loadFile("test1.d", &gdata->dman);
+	locationLoader::loadFile("airship.loc", &gdata->lman);
+
+
+	loadingscreen(gdata);
 
 
 	//	character creation
 	charCreationLoop(gdata);
 	//charViewerLoop(gdata);
 
+	loadingscreen(gdata);
+
+	/*gdata->currentLocation = getLocationById(&gdata->lman, "airship");
+	explorationLoop(gdata);*/
+
+
 	auto d = getDialogueById(&gdata->dman, "test1");
 	gdata->currentDialogue = d;
 	dialogueLoop(gdata);
+
+	return 1;
 }

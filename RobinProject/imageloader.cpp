@@ -34,13 +34,29 @@ texturePtr getTextureFromImage(sf::Image * img, const int x, const int y, const 
 }
 
 
+//	Loads an entire image file into a single texture & returns it.
+texturePtr getTextureFromFile(const string filename)
+{
+	auto tx = texturePtr(new sf::Texture());
+	if (tx->loadFromFile("data/img/" + filename))
+		return tx;
+	
+	else
+	{
+		cout << "ERROR! Couldn't load texture from file named " << filename << endl;
+		return nullptr;
+	}
+}
+
+
+
 //	Creates and returns the texture sheet for character creation
 texture_library * getCreatureLibrary()
 {
 	auto tlib = new texture_library();
 	auto img = new sf::Image();
 
-	img->loadFromFile("img/cc_face_parts.png");
+	img->loadFromFile("data/img/cc_face_parts.png");
 	//img->createMaskFromColor(sf::Color(255, 105, 180));
 
 	createTextureAndAdd(tlib, img, "base",		0, 0);
@@ -67,10 +83,10 @@ texture_library * getCharCreationLibrary()
 	auto tlib = new texture_library();
 	auto img = new sf::Image();
 
-	img->loadFromFile("img/cc_screen.png");
+	img->loadFromFile("data/img/cc_screen.png");
 	createTextureAndAdd(tlib, img, "screen", 0, 0, 800, 600);
 
-	img->loadFromFile("img/cc_buttons.png");
+	img->loadFromFile("data/img/cc_buttons.png");
 	createTextureAndAdd(tlib, img, "btn_reset", 40, 65, 140, 110);
 	createTextureAndAdd(tlib, img, "btn_randomize", 33, 180, 150, 150);
 	createTextureAndAdd(tlib, img, "btn_arrow", 496, 44, 60, 60);
@@ -85,10 +101,10 @@ texture_library * getStatSelectionLibrary()
 	auto tlib = new texture_library();
 	auto img = new sf::Image();
 
-	img->loadFromFile("img/cc_mirror.png");
+	img->loadFromFile("data/img/cc_mirror.png");
 	createTextureAndAdd(tlib, img, "bg", 0, 0, 800, 600);
 
-	img->loadFromFile("img/cc_mirror_buttons.png");
+	img->loadFromFile("data/img/cc_mirror_buttons.png");
 	createTextureAndAdd(tlib, img, "btn_circle1", 575, 450, 80, 70);
 	createTextureAndAdd(tlib, img, "btn_circle2", 690, 490, 110, 105);
 
@@ -100,7 +116,7 @@ texture_library * getNPCLibrary()
 	auto tlib = new texture_library();
 	auto img = new sf::Image();
 
-	img->loadFromFile("img/npc.png");
+	img->loadFromFile("data/img/npc.png");
 	createTextureAndAdd(tlib, img, "reggie_p", 200, 0);
 	createTextureAndAdd(tlib, img, "olivia_hairless", 400, 0);
 	createTextureAndAdd(tlib, img, "olivia_hair", 600, 0);

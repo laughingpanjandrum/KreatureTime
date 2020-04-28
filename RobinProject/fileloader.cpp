@@ -10,8 +10,6 @@ void dialogueLoader::test_output_dialogue(dialoguePtr d)
 	for (auto dop : d->options)
 	{
 		cout << "  Option [" + dop->id << "]";
-		if (dop->first)
-			cout << " (first)";
 		if (dop->startUnlocked)
 			cout << " (starts unlocked)";
 		cout << endl;
@@ -33,7 +31,7 @@ void dialogueLoader::test_output_dialogue(dialoguePtr d)
 
 
 //	Removes preceding and trailing whitespace, AND all internal whitespace that is NOT contained in quotation marks
-string dialogueLoader::strip_whitespace(const string s)
+string fileLoader::strip_whitespace(const string s)
 {
 	string nstr = "";
 	bool inquotes = false;
@@ -51,16 +49,16 @@ string dialogueLoader::strip_whitespace(const string s)
 }
 
 //	Gets the actual file path, given just the bare filename
-string dialogueLoader::generate_file_path(const string filename)
+string fileLoader::generate_file_path(const string subfolder, const string filename)
 {
-	return "data/dialogue/" + filename;
+	return "data/" + subfolder + "/" + filename;
 }
 
 
 //	Takes a line formatted as:
 //		"id" "value"
 //	Strips out the quote marks; pair.first contains the id, pair.second contains the value.
-pair<string, string> dialogueLoader::break_line(const string line)
+pair<string, string> fileLoader::break_line(const string line)
 {
 	pair<string, string> result;
 	string chunk = "";
@@ -110,10 +108,12 @@ doptionPtr dialogueLoader::loadDialogueOption(ifstream * f)
 {
 	auto dop = doptionPtr(new dialogue_option());
 	dop->startUnlocked = false;
+	dop->lockWhenRead = false;
+	dop->visited = false;
 	string line;
 	while (getline(*f, line))
 	{
-		line = strip_whitespace(line);
+		line = fileLoader::strip_whitespace(line);
 
 		//	a preceding '}' marks the end of the dialogue option
 		if (line[0] == '}')
@@ -122,21 +122,19 @@ doptionPtr dialogueLoader::loadDialogueOption(ifstream * f)
 		//	otherwise, try to parse the line
 		else
 		{
-			auto b = break_line(line);
+			auto b = fileLoader::break_line(line);
 		
 			//	ID of this options
 			if (b.first == "option")
-			{
 				dop->id = b.second;
-				if (b.second == DIALOGUE_FIRST_ID)
-					dop->first = true;
-			}
 
-			//	Sets option to start unlocked
-			else if (b.first == "unlocked")
+			//	Sets flags
+			else if (b.first == "flag")
 			{
-				if (b.second == "true")
+				if (b.second == "unlocked")
 					dop->startUnlocked = true;
+				else if (b.second == "lockWhenRead")
+					dop->lockWhenRead = true;
 			}
 
 			//	Selecting this option unlocks other options with the given ids
@@ -180,7 +178,7 @@ void dialogueLoader::loadDialogue(ifstream * f, dialogueManager * dman)
 	//	Read in data for the dialogue line
 	while (getline(*f, line))
 	{
-		line = strip_whitespace(line);
+		line = fileLoader::strip_whitespace(line);
 
 		//	end of dialogue reach
 		if (line == DIALOGUE_END_MARK)
@@ -202,7 +200,7 @@ void dialogueLoader::loadDialogue(ifstream * f, dialogueManager * dman)
 		//	otherwise, try to parse the line
 		else
 		{
-			auto b = break_line(line);
+			auto b = fileLoader::break_line(line);
 			if (b.first == "id")
 				d->id = b.second;
 		}
@@ -218,7 +216,7 @@ void dialogueLoader::loadDialogue(ifstream * f, dialogueManager * dman)
 void dialogueLoader::loadFile(const string filename, dialogueManager * dman)
 {
 	ifstream fobj;
-	fobj.open(generate_file_path(filename));
+	fobj.open(fileLoader::generate_file_path(SUBFOLDER_DIALOGUE, filename));
 	string line;
 	while (getline(fobj, line))
 	{
@@ -227,5 +225,88 @@ void dialogueLoader::loadFile(const string filename, dialogueManager * dman)
 	}
 	fobj.close();
 
-	test_output_dialogue(dman->all[0]);
+//	test_output_dialogue(dman->all[0]);
+}
+
+
+//	Frames contain data about the sprite coordinates at which to centre & the player's position in the frame.
+lframePtr locationLoader::loadFrame(ifstream * f)
+{
+	auto lf = lframePtr(new location_frame());
+	string line;
+	while (getline(*f, line))
+	{
+		line = fileLoader::strip_whitespace(line);
+		if (line == "[END]")
+			return lf;
+
+		else if (!line.empty())
+		{
+			auto dat = fileLoader::break_line(line);
+			
+			if (dat.first == "x")
+				lf->framex = stoi(dat.second);
+			else if (dat.first == "y")
+				lf->framey = stoi(dat.second);
+
+			else if (dat.first == "player_x")
+				lf->playerx = stoi(dat.second);
+			else if (dat.first == "player_y")
+				lf->playery = stoi(dat.second);
+
+			else
+				cout << "Unrecognized frame data: " << dat.first << "," << dat.second << endl;
+		}
+	}
+
+	cout << "ERROR: File terminated before end of frame!" << endl;
+	return lf;
+}
+
+
+
+//	Load an entire location from a given file.
+void locationLoader::loadLocation(ifstream * f, locationManager * lman)
+{
+	auto loc = locationPtr(new location());
+	string line;
+	while (getline(*f, line))
+	{
+		line = fileLoader::strip_whitespace(line);
+		if (line == "[FRAME]")
+			loc->frames.push_back(loadFrame(f));
+
+		else if (!line.empty())
+		{
+			auto dat = fileLoader::break_line(line);
+
+			if (dat.first == "id")
+				loc->id = dat.second;
+			else if (dat.first == "back")
+				loc->bg_texture = dat.second;
+			else if (dat.first == "fore")
+				loc->fg_texture = dat.second;
+			else if (dat.first == "name")
+				loc->name = dat.second;
+		}
+	}
+	lman->all.push_back(loc);
+	cout << "Generated location with id '" << loc->id << "' named '" << loc->name << "'." << endl;
+	//cout << "  Start: " << loc->startx << "," << loc->starty;
+	//cout << "; Frame: " << loc->framex << "," << loc->framey << endl;
+}
+
+
+//	Load location data from a given file, adding it to the manager.
+void locationLoader::loadFile(const string filename, locationManager * lman)
+{
+	ifstream fobj;
+	fobj.open(fileLoader::generate_file_path(SUBFOLDER_LOCATIONS, filename));
+	if (fobj.is_open())
+	{
+		loadLocation(&fobj, lman);
+		fobj.close();
+	}
+	else
+		cout << "ERROR! Couldn't open location file " << filename << endl;
 }

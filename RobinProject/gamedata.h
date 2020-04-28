@@ -26,5 +26,17 @@ struct gamedata
 	dialogueManager dman;
 	dialoguePtr currentDialogue;
 
+	//	Locations
+	locationManager lman;
+	locationPtr currentLocation;
+
+	//	Current position in a location
+	lframePtr currentFrame;
+	spritePtr bg_sprite;
+	spritePtr fg_sprite;
+
+	bool inFrameTransition = false;
+	sf::Vector2i frame_trans_vec;
+
 };
 typedef shared_ptr<gamedata> gamedataPtr;

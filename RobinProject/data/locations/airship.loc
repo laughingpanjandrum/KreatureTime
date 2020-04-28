@@ -1,0 +1,35 @@
+
+"id" 		"airship"
+"name" 		"Airship"
+
+"back" 		"loc_airship_bg_small.png"
+"fore" 		"loc_airship_fg_small.png"
+
+[FRAME]
+	"x" 		"185"
+	"y" 		"115"
+	"player_x" 	"610"
+	"player_y" 	"330"
+[END]
+	
+[FRAME]
+	"x"			"1000"
+	"y"			"115"
+	"player_x"	"1200"
+	"player_y"	"330"
+[END]
+
+[FRAME]
+	"x"			"1700"
+	"y"			"115"
+	"player_x"	"1900"
+	"player_y"	"330"
+[END]
+
+[FRAME]
+	"x"			"2700"
+	"y"			"90"
+	"player_x"	"2900"
+	"player_y"	"160"
+[END]
+

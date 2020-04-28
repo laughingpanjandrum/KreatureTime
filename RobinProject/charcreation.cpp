@@ -104,9 +104,9 @@ void charCreationLoop(gamedataPtr gdata)
 	//	list of buttons appearing
 	vector<buttonPtr> buttons;
 	
-	createButton(&buttons, "btn_reset",			40, 65, 140, 110, getTextureByLabel(btn_tlib, "btn_reset"));
-	createButton(&buttons, "btn_randomize",		33, 180, 150, 150, getTextureByLabel(btn_tlib, "btn_randomize"));
-	createButton(&buttons, "btn_begin",			595, 520, 205, 70, getTextureByLabel(btn_tlib, "btn_accept"));
+	createButton(&buttons, "btn_reset",			40,  65,  140, 110, getTextureByLabel(btn_tlib, "btn_reset"));
+	createButton(&buttons, "btn_randomize",		33,  180, 150, 150, getTextureByLabel(btn_tlib, "btn_randomize"));
+	createButton(&buttons, "btn_begin",			595, 520, 205, 70,  getTextureByLabel(btn_tlib, "btn_accept"));
 	
 	createButton(&buttons, "btn_sight_l",		640, 45,  50, 50, getTextureByLabel(btn_tlib, "btn_arrow"));
 	createButton(&buttons, "btn_sight_r",		500, 45,  50, 50, getTextureByLabel(btn_tlib, "btn_arrow"));

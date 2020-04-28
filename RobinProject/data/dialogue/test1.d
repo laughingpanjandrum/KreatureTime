@@ -12,21 +12,22 @@
 	}
 	{ 
 		"option" 			"about_gamers"
-		"unlocked" 			"true"
+		"flag"	"unlocked"
 		"title" "More about Gamers"
 		"you"	"Tell me more about gamers."
 		"them"	"They hate Womyn."
 	}
 	{ 
 		"option" 			"about_games"
-		"unlocked" 			"true"
+		"flag"	"unlocked"
 		"title"  "More about Video Games"
 		"you"	"Tell me more about Video Games."
 		"them"	"The best one is Kane and Lynch 2."
 	}
 	{ 	
 		"option" 			"mystery"
-		"unlocked" 			"true"
+		"flag"	"unlocked"
+		"flag"	"lockWhenRead"
 		"title" "Any mysteries?"
 		"you"	"Are there any big mysteries or curiosities here?"
 		"them"	"Yes, but I will not tell you anything about them."

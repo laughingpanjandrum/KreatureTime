@@ -179,6 +179,11 @@ void dialogueLoop(gamedataPtr gdata)
 						lineIdx = 0;
 						buttons.clear();
 
+						//	check whether the option should lock once it's read
+						if (currentOption->lockWhenRead)
+							currentOption->locked = true;
+						currentOption->visited = true;
+
 						//	check for options unlocked by this option
 						for (auto unlock_id : currentOption->unlocks)
 						{

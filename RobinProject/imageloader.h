@@ -43,6 +43,11 @@ texturePtr getTextureFromImage(sf::Image* img, const int x, const int y, const i
 
 
 
+//	getting particular textures
+
+texturePtr getTextureFromFile(const string filename);
+
+
 //	generating texture libraries
 
 texture_library* getCreatureLibrary();
