@@ -28,13 +28,8 @@ void positionBackground(spritePtr bg, spritePtr fg, const int x, const int y)
 void positionSpriteInFrame(spritePtr spr, spritePtr frame, const int x, const int y)
 {
 	auto frame_pos = frame->getPosition();
-	cout << "Frame position: " << frame_pos.x << "," << frame_pos.y << endl;
-	cout << "Desired global position: " << x << "," << y << endl;
-
 	int nx = x + frame_pos.x;
 	int ny = y + frame_pos.y;
-	cout << "Adjusted screen position: " << nx << "," << ny << endl;
-
 	spr->setPosition(nx, ny);
 }
 
@@ -55,8 +50,10 @@ void stepFrameTransition(gamedataPtr gdata)
 	sf::Vector2i vec;
 	vec.x = 0; vec.y = 0;
 	
+
 	//	get direction to correct frame position
 	auto cpos = gdata->bg_sprite->getPosition();
+
 
 	//	difference between our desired position & the current frame position
 	int xdiff = cpos.x + gdata->currentFrame->framex;
@@ -67,13 +64,18 @@ void stepFrameTransition(gamedataPtr gdata)
 	if		(ydiff < 0)	vec.y = FRAME_TRANSITION_RATE;
 	else if (ydiff > 0)	vec.y = -FRAME_TRANSITION_RATE;
 
+
 	//	shift the frame
 	cpos.x += vec.x;
 	cpos.y += vec.y;
 	positionBackground(gdata->bg_sprite, gdata->fg_sprite, cpos.x, cpos.y);
 
-	//	shift the player sprite so it maintains its position
+
+	//	shift the player sprite and all NPC sprites so they maintains their positions
 	gdata->playerSprite->move(vec.x, vec.y);
+	for (auto npc : gdata->npcSprites)
+		npc->move(vec.x, vec.y);
+
 
 	//	if we've reached the desired position, stop transitioning & set the player's final position.
 	//	we consider ourselves at the destination point if the absolute distance along each axis is less than the transition distance.
@@ -112,9 +114,16 @@ void explorationLoop(gamedataPtr gdata)
 
 	//	Get the foreground/background textures for this location.
 	cout << "Loading texture file " << loc->bg_texture << endl;
-	texturePtr bg = getTextureFromFile(loc->bg_texture);
+	texturePtr bg = getTextureFromFile("loc/" + loc->bg_texture);
 	cout << "Loading texture file " << loc->fg_texture << endl;
-	texturePtr fg = getTextureFromFile(loc->fg_texture);
+	texturePtr fg = getTextureFromFile("loc/" + loc->fg_texture);
+
+
+	//	Highlighting marks
+	sf::Sprite bang;
+	auto bang_tx = getTextureFromFile("bang.png");
+	bang.setTexture(*bang_tx);
+	bang.setPosition(-50, -50);
 
 
 	//	Create sprites to contain these textures.
@@ -126,9 +135,21 @@ void explorationLoop(gamedataPtr gdata)
 	gdata->fg_sprite->setOrigin(0, 0);
 
 
+	//	Load NPC sprites
+	gdata->npcSprites.clear();
+	for (auto npcdat : loc->npcs)
+	{
+		auto npc_spr = createNPCSprite(npcdat->npcId, &gdata->nman);
+		npc_spr->setOrigin(0, 0);
+		gdata->npcSprites.push_back(npc_spr);
+	}
+
+
 	//	Initial frame
 	int frameIdx = 0;
 	setCurrentFrame(gdata, loc->frames[frameIdx]);
+	for (unsigned i = 0; i < loc->npcs.size(); i++)
+		positionSpriteInFrame(gdata->npcSprites[i], gdata->bg_sprite, loc->npcs[i]->x, loc->npcs[i]->y);
 
 
 	//	The principal loop.
@@ -156,7 +177,42 @@ void explorationLoop(gamedataPtr gdata)
 				else if (event.key.code == sf::Keyboard::Left)
 					cycleFrame(gdata, &frameIdx, -1);
 			}
+
+
+			//	Handle clicks
+			else if (event.type == sf::Event::EventType::MouseButtonReleased && !gdata->inFrameTransition)
+			{
+				auto mpos = sf::Mouse::getPosition(*gdata->rwindow);
+				
+				//	Did we click on a creature?
+				for (unsigned i = 0; i < loc->npcs.size(); i++)
+				{
+					if (gdata->npcSprites[i]->getGlobalBounds().contains(mpos.x, mpos.y))
+					{
+						//	begin a dialogue, if one is defined
+						auto dialogueId = loc->npcs[i]->dialogueId;
+						if (!dialogueId.empty())
+						{
+							//	get the dialogue
+							gdata->currentDialogue = getDialogueById(&gdata->dman, dialogueId);
+							if (gdata->currentDialogue != nullptr)
+							{
+								//	save the player's current position
+								auto ppos = gdata->playerSprite->getPosition();
+
+								//	execute the dialogue
+								loadingscreen(gdata);
+								dialogueLoop(gdata);
+
+								//	restore the player's previous position upon exiting dialogue
+								gdata->playerSprite->setPosition(ppos);
+							}
+						}
+					}
+				}
+			}
 		}
+
 
 
 
@@ -169,8 +225,25 @@ void explorationLoop(gamedataPtr gdata)
 		//	render the display
 		gdata->rwindow->clear();
 
+		//	background on the BOTTOM
 		gdata->rwindow->draw(*gdata->bg_sprite);
+
+		//	draw NPC's: check if we've moused over any of them
+		auto mpos = sf::Mouse::getPosition(*gdata->rwindow);
+		for (auto npc : gdata->npcSprites)
+		{
+			gdata->rwindow->draw(*npc);
+			if (npc->getGlobalBounds().contains(mpos.x, mpos.y))
+			{
+				bang.setPosition(npc->getPosition());
+				gdata->rwindow->draw(bang);
+			}
+		}
+
+		//	player sprite
 		gdata->rwindow->draw(*gdata->playerSprite);
+
+		//	foreground on the TOP
 		gdata->rwindow->draw(*gdata->fg_sprite);
 
 		gdata->rwindow->display();

@@ -51,6 +51,9 @@
     <ClInclude Include="exploration.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="npc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -87,6 +90,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="exploration.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="npc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

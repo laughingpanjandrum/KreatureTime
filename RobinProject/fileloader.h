@@ -10,6 +10,7 @@ using namespace std;
 
 #define SUBFOLDER_DIALOGUE	"dialogue"
 #define SUBFOLDER_LOCATIONS	"locations"
+#define SUBFOLDER_NPCS		"npc"
 
 #define DIALOGUE_START_MARK	"[DIALOGUE]"
 #define DIALOGUE_END_MARK	"[END]"
@@ -55,6 +56,7 @@ typedef shared_ptr<dialogue_option> doptionPtr;
 struct dialogue
 {
 	string				id;
+	string				withNpc;
 	vector<doptionPtr>	options;
 };
 typedef shared_ptr<dialogue> dialoguePtr;
@@ -97,14 +99,29 @@ struct location_frame
 typedef shared_ptr<location_frame> lframePtr;
 
 
+struct location_npc
+{
+	string npcId;
+	int x, y;
+	string dialogueId;
+};
+typedef shared_ptr<location_npc> lnpcPtr;
+
+
 struct location
 {
 	string id;		//	unique identifier for this location
 	string name;	//	name (displayed to the player)
 
+
 	//	foreground/background textures
 	string bg_texture;
 	string fg_texture;
+
+
+	//	npc data
+	vector<lnpcPtr> npcs;
+
 
 	//	frames available in the location
 	vector<lframePtr> frames;
@@ -123,7 +140,38 @@ namespace locationLoader
 {
 
 	lframePtr loadFrame(ifstream* f);
+	lnpcPtr loadNpc(ifstream* f);
 	void loadLocation(ifstream* f, locationManager* lman);
 	void loadFile(const string filename, locationManager* lman);
+
+}
+
+
+
+
+// ..........................................................................
+//		Data structures for NPCs
+
+
+struct npcData
+{
+	string id;
+	string file;
+	int x, y, w, h;
+};
+typedef shared_ptr<npcData> npcDataPtr;
+
+
+struct npcDataManager
+{
+	vector<npcDataPtr> all;
+};
+
+
+namespace npcLoader
+{
+
+	npcDataPtr loadNPC(ifstream* f);
+	void loadFile(const string filename, npcDataManager* nman);
 
 }

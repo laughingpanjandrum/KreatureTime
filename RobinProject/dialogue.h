@@ -4,6 +4,7 @@
 #include "fileloader.h"
 #include "gamedata.h"
 #include "drawing.h"
+#include "npc.h"
 
 
 string wrap_text(const string line, int linelen);

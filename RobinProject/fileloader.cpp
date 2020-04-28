@@ -203,6 +203,8 @@ void dialogueLoader::loadDialogue(ifstream * f, dialogueManager * dman)
 			auto b = fileLoader::break_line(line);
 			if (b.first == "id")
 				d->id = b.second;
+			else if (b.first == "npc")
+				d->withNpc = b.second;
 		}
 	}
 
@@ -264,6 +266,41 @@ lframePtr locationLoader::loadFrame(ifstream * f)
 }
 
 
+//	An NPC appearing in a location.
+lnpcPtr locationLoader::loadNpc(ifstream * f)
+{
+	auto npc = lnpcPtr(new location_npc());
+	string line;
+	while (getline(*f, line))
+	{
+		line = fileLoader::strip_whitespace(line);
+		if (line == "[END]")
+			return npc;
+
+		else if (!line.empty())
+		{
+			auto dat = fileLoader::break_line(line);
+
+			if (dat.first == "x")
+				npc->x = stoi(dat.second);
+			else if (dat.first == "y")
+				npc->y = stoi(dat.second);
+
+			else if (dat.first == "id")
+				npc->npcId = dat.second;
+			else if (dat.first == "dialogue")
+				npc->dialogueId = dat.second;
+
+			else
+				cout << "Unrecognized location NPC data: " << dat.first << "," << dat.second << endl;
+		}
+	}
+
+	cout << "ERROR: File terminated before end of NPC data!" << endl;
+	return npc;
+}
+
+
 
 //	Load an entire location from a given file.
 void locationLoader::loadLocation(ifstream * f, locationManager * lman)
@@ -275,6 +312,8 @@ void locationLoader::loadLocation(ifstream * f, locationManager * lman)
 		line = fileLoader::strip_whitespace(line);
 		if (line == "[FRAME]")
 			loc->frames.push_back(loadFrame(f));
+		else if (line == "[NPC]")
+			loc->npcs.push_back(loadNpc(f));
 
 		else if (!line.empty())
 		{
@@ -309,4 +348,70 @@ void locationLoader::loadFile(const string filename, locationManager * lman)
 	}
 	else
 		cout << "ERROR! Couldn't open location file " << filename << endl;
+}
+
+
+npcDataPtr npcLoader::loadNPC(ifstream * f)
+{
+	string line;
+	auto npc = npcDataPtr(new npcData());
+
+	//	default size values
+	npc->w = 200;
+	npc->h = 300;
+
+	//	load data
+	while (getline(*f, line))
+	{
+		line = fileLoader::strip_whitespace(line);
+		if (line == "[END]")
+			return npc;
+
+		else
+		{
+			auto dat = fileLoader::break_line(line);
+			
+			if (dat.first == "id")
+				npc->id = dat.second;
+			else if (dat.first == "file")
+				npc->file = dat.second;
+			
+			else if (dat.first == "x")
+				npc->x = stoi(dat.second);
+			else if (dat.first == "y")
+				npc->y = stoi(dat.second);
+			
+			else if (dat.first == "w")
+				npc->w = stoi(dat.second);
+			else if (dat.first == "h")
+				npc->h = stoi(dat.second);
+		}
+	}
+
+	cout << "ERROR: NPC with id '" << npc->id << "' didn't terminate correctly" << endl;
+	return npc;
+}
+
+
+void npcLoader::loadFile(const string filename, npcDataManager * nman)
+{
+	ifstream fobj;
+	fobj.open(fileLoader::generate_file_path(SUBFOLDER_NPCS, filename));
+	if (fobj.is_open())
+	{
+		string line;
+		while (getline(fobj, line))
+		{
+			if (fileLoader::strip_whitespace(line) == "[NPC]")
+				nman->all.push_back(loadNPC(&fobj));
+		}
+		fobj.close();
+	}
+	else
+		cout << "ERROR! Couldn't open NPC file " << filename << endl;
+
+	//	debugger
+	cout << "Loaded NPCS:" << endl;
+	for (auto npc : nman->all)
+		cout << " id '" << npc->id << "', file '" << npc->file << "', rectangle " << npc->x << ',' << npc->y << ',' << npc->x << ',' << npc->y << endl;
 }

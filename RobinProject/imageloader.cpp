@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "imageloader.h"
 
+
+
 texturePtr getTextureByLabel(texture_library * tlib, const string label)
 {
 	auto f = find(tlib->labels.begin(), tlib->labels.end(), label);
@@ -56,7 +58,7 @@ texture_library * getCreatureLibrary()
 	auto tlib = new texture_library();
 	auto img = new sf::Image();
 
-	img->loadFromFile("data/img/cc_face_parts.png");
+	img->loadFromFile("data/img/cc/cc_face_parts.png");
 	//img->createMaskFromColor(sf::Color(255, 105, 180));
 
 	createTextureAndAdd(tlib, img, "base",		0, 0);
@@ -83,10 +85,10 @@ texture_library * getCharCreationLibrary()
 	auto tlib = new texture_library();
 	auto img = new sf::Image();
 
-	img->loadFromFile("data/img/cc_screen.png");
+	img->loadFromFile("data/img/cc/cc_screen.png");
 	createTextureAndAdd(tlib, img, "screen", 0, 0, 800, 600);
 
-	img->loadFromFile("data/img/cc_buttons.png");
+	img->loadFromFile("data/img/cc/cc_buttons.png");
 	createTextureAndAdd(tlib, img, "btn_reset", 40, 65, 140, 110);
 	createTextureAndAdd(tlib, img, "btn_randomize", 33, 180, 150, 150);
 	createTextureAndAdd(tlib, img, "btn_arrow", 496, 44, 60, 60);
@@ -101,7 +103,7 @@ texture_library * getStatSelectionLibrary()
 	auto tlib = new texture_library();
 	auto img = new sf::Image();
 
-	img->loadFromFile("data/img/cc_mirror.png");
+	img->loadFromFile("data/img/cc/cc_mirror.png");
 	createTextureAndAdd(tlib, img, "bg", 0, 0, 800, 600);
 
 	img->loadFromFile("data/img/cc_mirror_buttons.png");

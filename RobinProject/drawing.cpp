@@ -68,6 +68,7 @@ sf::Text * createTextElement(sf::Font * font, string txt, int x, int y, sf::Colo
 	return tbox;
 }
 
+
 void renderActor(sf::RenderWindow * rwindow, player_image * pimage)
 {
 	//	the actor's BODY is rendered first, then each of their layers

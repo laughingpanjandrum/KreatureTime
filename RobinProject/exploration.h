@@ -3,6 +3,8 @@
 #include "gamedata.h"
 #include "imageloader.h"
 #include "fileloader.h"
+#include "npc.h"
+#include "dialogue.h"
 
 
 #define FRAME_TRANSITION_RATE	3

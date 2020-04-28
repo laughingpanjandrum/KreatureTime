@@ -20,15 +20,6 @@ using namespace std;
 
 
 
-void loadingscreen(gamedataPtr gdata)
-{
-	auto tx = createTextElement(&gdata->usefont, "Loading", 350, 350);
-	gdata->rwindow->clear(sf::Color(255, 255, 255));
-	gdata->rwindow->draw(*tx);
-	gdata->rwindow->display();
-}
-
-
 
 int main()
 {
@@ -49,6 +40,7 @@ int main()
 	//	loading game data
 	dialogueLoader::loadFile("test1.d", &gdata->dman);
 	locationLoader::loadFile("airship.loc", &gdata->lman);
+	npcLoader::loadFile("npc.dat", &gdata->nman);
 
 
 	loadingscreen(gdata);
@@ -60,13 +52,13 @@ int main()
 
 	loadingscreen(gdata);
 
-	/*gdata->currentLocation = getLocationById(&gdata->lman, "airship");
-	explorationLoop(gdata);*/
+	gdata->currentLocation = getLocationById(&gdata->lman, "airship");
+	explorationLoop(gdata);
 
 
-	auto d = getDialogueById(&gdata->dman, "test1");
+	/*auto d = getDialogueById(&gdata->dman, "test1");
 	gdata->currentDialogue = d;
-	dialogueLoop(gdata);
+	dialogueLoop(gdata);*/
 
 	return 1;
 }

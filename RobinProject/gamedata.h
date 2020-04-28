@@ -21,16 +21,22 @@ struct gamedata
 	sf::String playerName;
 	playerdataPtr playerData;
 
+	//	NPC data
+	npcDataManager nman;
+
 
 	//	Dialogue
 	dialogueManager dman;
 	dialoguePtr currentDialogue;
 
+
 	//	Locations
 	locationManager lman;
 	locationPtr currentLocation;
 
+
 	//	Current position in a location
+	vector<spritePtr> npcSprites;
 	lframePtr currentFrame;
 	spritePtr bg_sprite;
 	spritePtr fg_sprite;
@@ -40,3 +46,18 @@ struct gamedata
 
 };
 typedef shared_ptr<gamedata> gamedataPtr;
+
+
+
+inline void loadingscreen(gamedataPtr gdata)
+{
+	auto tx = sf::Text();
+	tx.setFont(gdata->usefont);
+	tx.setString("Loading...");
+	tx.setPosition(350, 250);
+	tx.setColor(sf::Color(0, 0, 0));
+	
+	gdata->rwindow->clear(sf::Color(255, 255, 255));
+	gdata->rwindow->draw(tx);
+	gdata->rwindow->display();
+}

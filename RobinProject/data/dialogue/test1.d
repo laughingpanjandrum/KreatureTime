@@ -1,6 +1,7 @@
 
 [DIALOGUE]
-	"id" = "test1"
+	"id" 	"test1"
+	"npc"	"reginald_p"
 	{ 
 		"option"			"_FIRST"
 		"title"  "Hello."
