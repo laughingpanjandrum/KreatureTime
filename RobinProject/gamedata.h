@@ -21,6 +21,7 @@ struct gamedata
 	sf::String playerName;
 	playerdataPtr playerData;
 
+
 	//	NPC data
 	npcDataManager nman;
 
@@ -28,6 +29,8 @@ struct gamedata
 	//	Dialogue
 	dialogueManager dman;
 	dialoguePtr currentDialogue;
+	spritePtr dialogue_frame_1;
+	spritePtr dialogue_frame_2;
 
 
 	//	Locations

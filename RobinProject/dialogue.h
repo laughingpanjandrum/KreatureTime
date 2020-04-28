@@ -12,4 +12,4 @@ doptionPtr getDialogueOptionById(dialoguePtr d, const string id);
 dialoguePtr getDialogueById(dialogueManager* dman, const string id);
 
 void updateDialogueDisplay(gamedataPtr gdata, doptionPtr dop, int l, sf::Text* youtxt, sf::Text* themtxt);
-void dialogueLoop(gamedataPtr gdata);
+void dialogueLoop(gamedataPtr gdata, spritePtr npc);

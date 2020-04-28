@@ -69,18 +69,18 @@ void updateDialogueDisplay(gamedataPtr gdata, doptionPtr dop, int l, sf::Text* y
 
 
 
-void dialogueLoop(gamedataPtr gdata)
+void dialogueLoop(gamedataPtr gdata, spritePtr npc)
 {
 	bool done = false;
 	sf::Event event;
 
 
 	//	dialogue interface
-	auto bg_tx_1 = getTextureFromFile("dialogue/you_frame.png");
+	/*auto bg_tx_1 = getTextureFromFile("dialogue/you_frame.png");
 	auto bg_tx_2 = getTextureFromFile("dialogue/npc_frame.png");
 	sf::Sprite youframe, npcframe;
 	youframe.setTexture(*bg_tx_1);
-	npcframe.setTexture(*bg_tx_2);
+	npcframe.setTexture(*bg_tx_2);*/
 
 
 	//	dialogue selection indicator
@@ -88,7 +88,7 @@ void dialogueLoop(gamedataPtr gdata)
 
 
 	//	(test using npc textures)
-	auto npc = createNPCSprite(gdata->currentDialogue->withNpc, &gdata->nman);
+	//auto npc = createNPCSprite(gdata->currentDialogue->withNpc, &gdata->nman);
 	npc->setPosition(570, 290);
 
 
@@ -122,19 +122,13 @@ void dialogueLoop(gamedataPtr gdata)
 		//	get input
 		while (gdata->rwindow->pollEvent(event))
 		{
+			//	closing the window quits instantly and horribly
 			if (event.type == sf::Event::EventType::Closed)
 				done = true;
 
 
-			//	Quit w/ ESCAPE
-			if (event.type == sf::Event::EventType::KeyPressed)
-			{
-				if (event.key.code == sf::Keyboard::Escape)
-					done = true;
-			}
-
 			//	Button handling
-			else if (event.type == sf::Event::EventType::MouseButtonReleased)
+			if (event.type == sf::Event::EventType::MouseButtonReleased)
 			{
 				//	we are cycling through lines
 				if (!viewingOptions)
@@ -149,23 +143,36 @@ void dialogueLoop(gamedataPtr gdata)
 					//	if we've reached the end, show dialogue options
 					else
 					{
-						buttons.clear();
-						auto tpos = you_txtbox->getPosition();
-						string lines = "";
-						int aty = tpos.y - 10;
-						for (unsigned i = 0; i < cdialog->options.size(); i++)
+						//	if the current option has the 'ends' flag set, the conversation ends now
+						if (currentOption->endsConversation)
+							done = true;
+
+						//	otherwise, show dialogue options
+						else
 						{
-							auto dop = cdialog->options[i];
-							if (!dop->locked)
+							//	create a button for each dialogue option
+							buttons.clear();
+							auto tpos = you_txtbox->getPosition();
+							string lines = "";
+							int aty = tpos.y - 10;
+
+							//	add every option to the textbox
+							for (unsigned i = 0; i < cdialog->options.size(); i++)
 							{
-								lines += dop->title + "\n\n";
-								createButton(&buttons, dop->id, tpos.x - 25, aty, 400, 30, check_tx);
-								aty += 35;
+								auto dop = cdialog->options[i];
+								if (!dop->locked)
+								{
+									lines += dop->title + "\n\n";
+									createButton(&buttons, dop->id, tpos.x - 25, aty, 400, 30, check_tx);
+									aty += 35;
+								}
 							}
+
+							//	update the textbox, clear the NPC's dialogue
+							you_txtbox->setString(lines);
+							them_txtbox->setString("");
+							viewingOptions = true;
 						}
-						you_txtbox->setString(lines);
-						them_txtbox->setString("");
-						viewingOptions = true;
 					}
 				}
 
@@ -214,8 +221,8 @@ void dialogueLoop(gamedataPtr gdata)
 		gdata->rwindow->clear(sf::Color(255, 255, 255));
 
 		//	interface elements
-		gdata->rwindow->draw(youframe);
-		gdata->rwindow->draw(npcframe);
+		gdata->rwindow->draw(*gdata->dialogue_frame_1);
+		gdata->rwindow->draw(*gdata->dialogue_frame_2);
 
 		//	character portraits
 		gdata->rwindow->draw(*gdata->playerSprite);

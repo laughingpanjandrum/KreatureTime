@@ -110,6 +110,7 @@ doptionPtr dialogueLoader::loadDialogueOption(ifstream * f)
 	dop->startUnlocked = false;
 	dop->lockWhenRead = false;
 	dop->visited = false;
+	dop->endsConversation = false;
 	string line;
 	while (getline(*f, line))
 	{
@@ -135,6 +136,10 @@ doptionPtr dialogueLoader::loadDialogueOption(ifstream * f)
 					dop->startUnlocked = true;
 				else if (b.second == "lockWhenRead")
 					dop->lockWhenRead = true;
+				else if (b.second == "ends")
+					dop->endsConversation = true;
+				else
+					cout << "ERROR: Unrecognized flag " << b.second << " in dialogue with id " << dop->id << endl;
 			}
 
 			//	Selecting this option unlocks other options with the given ids

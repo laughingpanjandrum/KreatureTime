@@ -197,15 +197,17 @@ void explorationLoop(gamedataPtr gdata)
 							gdata->currentDialogue = getDialogueById(&gdata->dman, dialogueId);
 							if (gdata->currentDialogue != nullptr)
 							{
-								//	save the player's current position
+								//	save the player and NPC's current position
 								auto ppos = gdata->playerSprite->getPosition();
+								auto npos = gdata->npcSprites[i]->getPosition();
 
 								//	execute the dialogue
 								loadingscreen(gdata);
-								dialogueLoop(gdata);
+								dialogueLoop(gdata, gdata->npcSprites[i]);
 
-								//	restore the player's previous position upon exiting dialogue
+								//	restore the previous position of each sprite upon exiting dialogue
 								gdata->playerSprite->setPosition(ppos);
+								gdata->npcSprites[i]->setPosition(npos);
 							}
 						}
 					}

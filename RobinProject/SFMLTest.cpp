@@ -32,6 +32,10 @@ int main()
 	gdata->rwindow = new sf::RenderWindow(sf::VideoMode(800, 600), "Kreature Time");
 
 
+	//	loading screen as we start up the game
+	loadingscreen(gdata);
+
+
 	//	font to be used
 	gdata->usefont = sf::Font();
 	gdata->usefont.loadFromFile("data/Old Typewriter2.0.ttf");
@@ -43,7 +47,13 @@ int main()
 	npcLoader::loadFile("npc.dat", &gdata->nman);
 
 
-	loadingscreen(gdata);
+	//	dialogue sprites are always in memory, since they're used so often
+	gdata->dialogue_frame_1 = spritePtr(new sf::Sprite());
+	gdata->dialogue_frame_2 = spritePtr(new sf::Sprite());
+	auto dtx_1 = getTextureFromFile("dialogue/you_frame.png");
+	auto dtx_2 = getTextureFromFile("dialogue/npc_frame.png");
+	gdata->dialogue_frame_1->setTexture(*dtx_1);
+	gdata->dialogue_frame_2->setTexture(*dtx_2);
 
 
 	//	character creation

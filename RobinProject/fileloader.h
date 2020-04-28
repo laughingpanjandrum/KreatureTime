@@ -47,6 +47,7 @@ struct dialogue_option
 
 	bool			lockWhenRead;
 	bool			startUnlocked;
+	bool			endsConversation;
 	bool			locked;
 	bool			visited;
 };
