@@ -43,6 +43,16 @@
 		"them"		"I won't tell you yet! Buy the whole game to unlock the mysteries."
 	}
 	{
+		"option"		"violence"
+		"reqViolence"	"5"
+		"flag"		"unlocked"
+		"flag"		"lockWhenRead"
+		"title"		"About violence."
+		"you"		"I think I might be a Violent kreature."
+		"them"		"Yes, I should say that you are!"
+		"them"		"Ooh - it just makes me quiver with fright!"
+	}
+	{
 		"option"		"goodbye"
 		"flag"			"ends"
 		"flag"			"unlocked"

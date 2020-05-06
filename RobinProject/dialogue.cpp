@@ -56,6 +56,22 @@ dialoguePtr getDialogueById(dialogueManager * dman, const string id)
 }
 
 
+//	Returns the state of the given dialogue option, ie whether it's currently available, & if not, WHY not
+dialogueOptionState getDialogueOptionState(gamedataPtr gdata, doptionPtr dop)
+{
+	//	Can't access because it's locked.
+	if (dop->locked)
+		return DOPTION_LOCKED;
+
+	//	Visible, but can't access because we don't have the required stats.
+	else if (dop->statReq != ATTR__MAX && gdata->playerData->getAttributeValue(dop->statReq) < dop->statReqAmount)
+		return DOPTION_DONT_MEET_REQ;
+
+	//	Otherwise, it's available.
+	return DOPTION_AVAILABLE;
+}
+
+
 //	Updates dialogue box to display the given line.
 void updateDialogueDisplay(gamedataPtr gdata, doptionPtr dop, int l, sf::Text* youtxt, sf::Text* themtxt)
 {
@@ -74,23 +90,11 @@ void dialogueLoop(gamedataPtr gdata, spritePtr npc)
 	bool done = false;
 	sf::Event event;
 
-
-	//	dialogue interface
-	/*auto bg_tx_1 = getTextureFromFile("dialogue/you_frame.png");
-	auto bg_tx_2 = getTextureFromFile("dialogue/npc_frame.png");
-	sf::Sprite youframe, npcframe;
-	youframe.setTexture(*bg_tx_1);
-	npcframe.setTexture(*bg_tx_2);*/
-
-
 	//	dialogue selection indicator
 	auto check_tx = getTextureFromFile("dialogue/dot.png");
 
-
-	//	(test using npc textures)
-	//auto npc = createNPCSprite(gdata->currentDialogue->withNpc, &gdata->nman);
+	//	position NPC image
 	npc->setPosition(570, 290);
-
 
 	//	position character portrait
 	gdata->playerSprite->setPosition(65, 40);
@@ -155,24 +159,41 @@ void dialogueLoop(gamedataPtr gdata, spritePtr npc)
 						{
 							//	create a button for each dialogue option
 							buttons.clear();
+							doptions.clear();
 							auto tpos = you_txtbox->getPosition();
 							int aty = tpos.y - 10;
-							doptions.clear();
 
 							//	add every option to the textbox
 							for (unsigned i = 0; i < cdialog->options.size(); i++)
 							{
 								auto dop = cdialog->options[i];
-								if (!dop->locked)
+								auto dop_state = getDialogueOptionState(gdata, dop);
+
+								//	Option is available, display it normally
+								if (dop_state == DOPTION_AVAILABLE)
 								{
+									//	indicate whether a stat is being used to select this
+									string txt = dop->title;
+									if (dop->statReq != ATTR__MAX)
+										txt += " (" + getAttributeName(dop->statReq) + ' ' + to_string(dop->statReqAmount) + ")";
+
 									//	options we have already visited are greyed out
 									sf::Color opcol(0, 0, 0);
 									if (dop->visited)
 										opcol = sf::Color(100, 100, 100);
-									doptions.push_back(createTextElement(&gdata->usefont, dop->title, tpos.x, aty, opcol, 15));
+									doptions.push_back(createTextElement(&gdata->usefont, txt, tpos.x, aty, opcol, 15));
 									
 									//	clickable region
 									createButton(&buttons, dop->id, tpos.x - 25, aty, 400, 30, check_tx);
+									aty += 35;
+								}
+
+								//	Option is NOT available, but is still visible
+								else if (dop_state == DOPTION_DONT_MEET_REQ)
+								{
+									int val = gdata->playerData->getAttributeValue(dop->statReq);
+									string txt = dop->title + " (" + getAttributeName(dop->statReq) + ' ' + to_string(val) + '/' + to_string(dop->statReqAmount) + ")";
+									doptions.push_back(createTextElement(&gdata->usefont, txt, tpos.x, aty, sf::Color(127, 0, 0), 15));
 									aty += 35;
 								}
 							}

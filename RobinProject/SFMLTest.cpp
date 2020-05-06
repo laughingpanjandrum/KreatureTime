@@ -58,7 +58,7 @@ int main()
 
 	//	character creation
 	charCreationLoop(gdata);
-	//charViewerLoop(gdata);
+	charViewerLoop(gdata);
 
 	loadingscreen(gdata);
 

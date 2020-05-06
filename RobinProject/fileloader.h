@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+#include "attributes.h"
+
 using namespace std;
 
 
@@ -38,13 +40,22 @@ namespace fileLoader
 
 struct dialogue_option
 {
+	//		Identification.
 	string			id;
+
+	//		Text displayed.
 	string			title;
 	vector<string>	lines;
 	vector<bool>	speaker;
 
+	//		Requirements.
+	unsigned		statReq;
+	int				statReqAmount;
+
+	//		Rewards.
 	vector<string>	unlocks;
 
+	//		Flags.
 	bool			lockWhenRead;
 	bool			startUnlocked;
 	bool			endsConversation;

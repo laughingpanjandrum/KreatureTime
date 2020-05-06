@@ -115,8 +115,12 @@ void charViewerLoop(gamedataPtr gdata)
 
 				if (btn != nullptr)
 				{
+					//	finish creating
+					if (btn->_id == "accept")
+						done = true;
+
 					//	stat adjustments
-					if (btn->_id == "appeal_d")
+					else if (btn->_id == "appeal_d")
 						tryAdjustStat(gdata, ATTR_APPEAL, -1, &statPoints);
 					else if (btn->_id == "appeal_u")
 						tryAdjustStat(gdata, ATTR_APPEAL, 1, &statPoints);

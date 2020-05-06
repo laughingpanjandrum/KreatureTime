@@ -9,11 +9,12 @@ using namespace std;
 
 /*
 
-Violence
 Appeal
-Pomp
-Presence
+Cunning
 Derring-Do
+Mysticism
+Pomp
+Violence
 
 */
 

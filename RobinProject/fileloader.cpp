@@ -106,11 +106,16 @@ pair<string, string> fileLoader::break_line(const string line)
 //	Loads the current dialogue option until we hit a closing brace.
 doptionPtr dialogueLoader::loadDialogueOption(ifstream * f)
 {
+	//	default values for a blank option
 	auto dop = doptionPtr(new dialogue_option());
+	dop->statReq = ATTR__MAX;
 	dop->startUnlocked = false;
 	dop->lockWhenRead = false;
 	dop->visited = false;
 	dop->endsConversation = false;
+	
+	
+	//	load in the option
 	string line;
 	while (getline(*f, line))
 	{
@@ -140,6 +145,38 @@ doptionPtr dialogueLoader::loadDialogueOption(ifstream * f)
 					dop->endsConversation = true;
 				else
 					cout << "ERROR: Unrecognized flag " << b.second << " in dialogue with id " << dop->id << endl;
+			}
+
+			//	Requirements
+			else if (b.first == "reqAppeal")
+			{
+				dop->statReq = ATTR_APPEAL;
+				dop->statReqAmount = stoi(b.second);
+			}
+			else if (b.first == "reqCunning")
+			{
+				dop->statReq = ATTR_CUNNING;
+				dop->statReqAmount = stoi(b.second);
+			}
+			else if (b.first == "reqDerringDo")
+			{
+				dop->statReq = ATTR_DERRING_DO;
+				dop->statReqAmount = stoi(b.second);
+			}
+			else if (b.first == "reqMysticism")
+			{
+				dop->statReq = ATTR_MYSTICISM;
+				dop->statReqAmount = stoi(b.second);
+			}
+			else if (b.first == "reqPomp")
+			{
+				dop->statReq = ATTR_POMP;
+				dop->statReqAmount = stoi(b.second);
+			}
+			else if (b.first == "reqViolence")
+			{
+				dop->statReq = ATTR_VIOLENCE;
+				dop->statReqAmount = stoi(b.second);
 			}
 
 			//	Selecting this option unlocks other options with the given ids

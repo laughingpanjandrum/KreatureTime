@@ -106,7 +106,7 @@ texture_library * getStatSelectionLibrary()
 	img->loadFromFile("data/img/cc/cc_mirror.png");
 	createTextureAndAdd(tlib, img, "bg", 0, 0, 800, 600);
 
-	img->loadFromFile("data/img/cc_mirror_buttons.png");
+	img->loadFromFile("data/img/cc/cc_mirror_buttons.png");
 	createTextureAndAdd(tlib, img, "btn_circle1", 575, 450, 80, 70);
 	createTextureAndAdd(tlib, img, "btn_circle2", 690, 490, 110, 105);
 
