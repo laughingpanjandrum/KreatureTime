@@ -3,6 +3,7 @@
 #include "attributes.h"
 #include "imageloader.h"
 #include "random.h"
+#include "equipment.h"
 
 
 namespace head_layer
@@ -61,14 +62,21 @@ public:
 	playerdata();
 	~playerdata() {}
 
+	//	Attributes
 	void setAttributeValue(const unsigned attr, int v);
 	const int getAttributeValue(const unsigned attr);
-
 	void adjustAttribute(const unsigned attr, int adj);
+
+	//	Equipment
+	vector<texturePtr> getWornEquipmentTextures() const;
+	void equipItem(equipmentPtr it);
+	void clearItemSlot(const unsigned slot) { _worn[slot] = nullptr; }
+	bool isEquipped(equipmentPtr it) const { return _worn[it->slot] == it; }
 
 private:
 
 	vector<int> _attributes;
+	vector<equipmentPtr> _worn;
 
 };
 typedef shared_ptr<playerdata> playerdataPtr;

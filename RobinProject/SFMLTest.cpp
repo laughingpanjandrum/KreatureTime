@@ -15,6 +15,7 @@
 #include "fileloader.h"
 #include "dialogue.h"
 #include "exploration.h"
+#include "invmanagement.h"
 
 using namespace std;
 
@@ -29,7 +30,7 @@ int main()
 	//	base game data
 	auto gdata = gamedataPtr(new gamedata());
 	gdata->pimage = new player_image();
-	gdata->rwindow = new sf::RenderWindow(sf::VideoMode(800, 600), "Kreature Time");
+	gdata->rwindow = new sf::RenderWindow(sf::VideoMode(800, 600), "A Kreature's Tale");
 
 
 	//	loading screen as we start up the game
@@ -45,6 +46,8 @@ int main()
 	dialogueLoader::loadFile("test1.d", &gdata->dman);
 	locationLoader::loadFile("airship.loc", &gdata->lman);
 	npcLoader::loadFile("npc.dat", &gdata->nman);
+	itemLoader::loadFile("equipment.dat", &gdata->eman);
+	loadAllItemTextures(&gdata->eman);
 
 
 	//	dialogue sprites are always in memory, since they're used so often
@@ -58,10 +61,15 @@ int main()
 
 	//	character creation
 	charCreationLoop(gdata);
+	loadingscreen(gdata);
 	charViewerLoop(gdata);
-
 	loadingscreen(gdata);
 
+	//	equipment test
+	inventoryManagementLoop(gdata);
+	loadingscreen(gdata);
+
+	//	starting location
 	gdata->currentLocation = getLocationById(&gdata->lman, "airship");
 	explorationLoop(gdata);
 

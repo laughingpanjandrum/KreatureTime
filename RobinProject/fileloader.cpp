@@ -457,3 +457,95 @@ void npcLoader::loadFile(const string filename, npcDataManager * nman)
 	for (auto npc : nman->all)
 		cout << " id '" << npc->id << "', file '" << npc->file << "', rectangle " << npc->x << ',' << npc->y << ',' << npc->x << ',' << npc->y << endl;
 }
+
+
+
+
+
+//=-=-=======================================================================================
+//		EQUIPMENT
+
+
+
+
+equipmentPtr itemLoader::loadEquipmentPiece(ifstream * f)
+{
+	auto it = equipmentPtr(new equipmentPiece());
+	it->hasItem = false;
+	string line;
+
+	while (getline(*f, line))
+	{
+		//	finish if we get a closing brace
+		line = fileLoader::strip_whitespace(line);
+		if (line == "}")
+			return it;
+
+		//	otherwise parse the line
+		else
+		{
+			auto dat = fileLoader::break_line(line);
+			
+			//	string data
+			if (dat.first == "id")
+				it->id = dat.second;
+			else if (dat.first == "name")
+				it->name = dat.second;
+
+			//	texture position
+			else if (dat.first == "x")
+				it->filex = stoi(dat.second);
+			else if (dat.first == "y")
+				it->filey = stoi(dat.second);
+
+			//	equip slot
+			else if (dat.first == "slot")
+			{
+				if (dat.second == "head")
+					it->slot = SLOT_HEAD;
+				else if (dat.second == "face")
+					it->slot = SLOT_FACE;
+				else if (dat.second == "body")
+					it->slot = SLOT_BODY;
+				else if (dat.second == "legs")
+					it->slot = SLOT_LEGS;
+				else if (dat.second == "feet")
+					it->slot = SLOT_FEET;
+				else if (dat.second == "hands")
+					it->slot = SLOT_HANDS;
+				else if (dat.second == "held")
+					it->slot = SLOT_HELD;
+				else
+					cout << "ERROR: Unknown item slot '" << dat.second << "' (item id " << it->id << ")" << endl;
+			}
+
+			//	error
+			else
+				cout << "ERROR: Bad item tag " << dat.first << " for item with id " << it->id << endl;
+		}
+	}
+
+	//	Whoops!
+	cout << "ERROR: File terminated before item block!" << endl;
+	return it;
+}
+
+
+
+void itemLoader::loadFile(const string filename, inventoryManager * eman)
+{
+	ifstream fobj;
+	fobj.open(fileLoader::generate_file_path(SUBFOLDER_ITEMS, filename));
+	if (fobj.is_open())
+	{
+		string line;
+		while (getline(fobj, line))
+		{
+			if (fileLoader::strip_whitespace(line) == "{")
+				eman->equipment.push_back(loadEquipmentPiece(&fobj));
+		}
+		fobj.close();
+	}
+	else
+		cout << "ERROR! Couldn't open item file " << filename << endl;
+}

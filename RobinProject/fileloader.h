@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "attributes.h"
+#include "equipment.h"
 
 using namespace std;
 
@@ -13,6 +14,7 @@ using namespace std;
 #define SUBFOLDER_DIALOGUE	"dialogue"
 #define SUBFOLDER_LOCATIONS	"locations"
 #define SUBFOLDER_NPCS		"npc"
+#define SUBFOLDER_ITEMS		"items"
 
 #define DIALOGUE_START_MARK	"[DIALOGUE]"
 #define DIALOGUE_END_MARK	"[END]"
@@ -185,5 +187,20 @@ namespace npcLoader
 
 	npcDataPtr loadNPC(ifstream* f);
 	void loadFile(const string filename, npcDataManager* nman);
+
+}
+
+
+
+
+// ..........................................................................
+//		Item data
+
+
+namespace itemLoader
+{
+
+	equipmentPtr loadEquipmentPiece(ifstream* f);
+	void loadFile(const string filename, inventoryManager* eman);
 
 }

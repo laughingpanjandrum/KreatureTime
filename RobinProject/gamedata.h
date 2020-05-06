@@ -2,6 +2,7 @@
 
 #include "actor.h"
 #include "attributes.h"
+#include "equipment.h"
 #include "fileloader.h"
 
 
@@ -24,6 +25,10 @@ struct gamedata
 
 	//	NPC data
 	npcDataManager nman;
+
+
+	//	Inventory
+	inventoryManager eman;
 
 
 	//	Dialogue

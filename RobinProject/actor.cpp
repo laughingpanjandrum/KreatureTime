@@ -57,11 +57,16 @@ sf::RenderTexture* player_image::flatten()
 }
 
 
+
 playerdata::playerdata()
 {
 	//	blank attribute values
 	for (unsigned i = 0; i < ATTR__MAX; i++)
 		_attributes.push_back(1);
+
+	//	initialize item slots
+	for (unsigned i = 0; i < SLOT__MAX; i++)
+		_worn.push_back(nullptr);
 }
 
 void playerdata::setAttributeValue(const unsigned attr, int v)
@@ -77,4 +82,23 @@ const int playerdata::getAttributeValue(const unsigned attr)
 void playerdata::adjustAttribute(const unsigned attr, int adj)
 {
 	_attributes[attr] += adj;
+}
+
+
+//	Returns a list of worn equipment textures in the order they should be equipped.
+vector<texturePtr> playerdata::getWornEquipmentTextures() const
+{
+	vector<texturePtr> txlist;
+	for (auto it : _worn)
+	{
+		if (it != nullptr)
+			txlist.push_back(it->tx);
+	}
+	return txlist;
+}
+
+//	Sets the given item as equipped in the given slot.
+void playerdata::equipItem(equipmentPtr it)
+{
+	_worn[it->slot] = it;
 }

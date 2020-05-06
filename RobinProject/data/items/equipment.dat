@@ -1,0 +1,56 @@
+
+{
+	"id"	"tophat"
+	"name"	"Fancy Top Hat"
+	"slot"	"head"
+	"x"		"0"
+	"y"		"0"
+}
+
+{
+	"id"	"monocle"
+	"name"	"Fancy Monocle"
+	"slot"	"face"
+	"x"		"200"
+	"y"		"0"
+}
+
+{
+	"id"	"tuxedo_shirt"
+	"name"	"Tuxedo Shirt"
+	"slot"	"body"
+	"x"		"400"
+	"y"		"0"
+}
+
+{
+	"id"	"fancy_pants"
+	"name"	"Fancy Dress Pants"
+	"slot"	"legs"
+	"x"		"0"
+	"y"		"300"
+}
+
+{
+	"id"	"dress_shoes"
+	"name"	"Fancy Dress Shoes"
+	"slot"	"feet"
+	"x"		"200"
+	"y"		"300"
+}
+	
+{
+	"id"	"red_gloves"
+	"name"	"Fancy Red Gloves"
+	"slot"	"hands"
+	"x"		"400"
+	"y"		"300"
+}
+
+{
+	"id"	"dress_cane"
+	"name"	"Dress Cane"
+	"slot"	"held"
+	"x"		"0"
+	"y"		"600"
+}
