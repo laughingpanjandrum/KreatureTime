@@ -106,6 +106,9 @@ void dialogueLoop(gamedataPtr gdata, spritePtr npc)
 	auto you_txtbox = createTextElement(&gdata->usefont, "", 260, 100, sf::Color(0, 0, 0), 15);
 	auto them_txtbox = createTextElement(&gdata->usefont, "", 50, 400, sf::Color(0, 0, 0), 15);
 
+	//	list of text-boxes, each containing a single dialogue option
+	vector<sf::Text*> doptions;
+
 
 	//	buttons (for selecting dialog options)
 	vector<buttonPtr> buttons;
@@ -153,8 +156,8 @@ void dialogueLoop(gamedataPtr gdata, spritePtr npc)
 							//	create a button for each dialogue option
 							buttons.clear();
 							auto tpos = you_txtbox->getPosition();
-							string lines = "";
 							int aty = tpos.y - 10;
+							doptions.clear();
 
 							//	add every option to the textbox
 							for (unsigned i = 0; i < cdialog->options.size(); i++)
@@ -162,14 +165,20 @@ void dialogueLoop(gamedataPtr gdata, spritePtr npc)
 								auto dop = cdialog->options[i];
 								if (!dop->locked)
 								{
-									lines += dop->title + "\n\n";
+									//	options we have already visited are greyed out
+									sf::Color opcol(0, 0, 0);
+									if (dop->visited)
+										opcol = sf::Color(100, 100, 100);
+									doptions.push_back(createTextElement(&gdata->usefont, dop->title, tpos.x, aty, opcol, 15));
+									
+									//	clickable region
 									createButton(&buttons, dop->id, tpos.x - 25, aty, 400, 30, check_tx);
 									aty += 35;
 								}
 							}
 
 							//	update the textbox, clear the NPC's dialogue
-							you_txtbox->setString(lines);
+							you_txtbox->setString("");
 							them_txtbox->setString("");
 							viewingOptions = true;
 						}
@@ -198,6 +207,7 @@ void dialogueLoop(gamedataPtr gdata, spritePtr npc)
 							//	clear select, restart from the beginning of this option
 							lineIdx = 0;
 							buttons.clear();
+							doptions.clear();
 
 							//	check whether the option should lock once it's read
 							if (currentOption->lockWhenRead)
@@ -218,7 +228,11 @@ void dialogueLoop(gamedataPtr gdata, spritePtr npc)
 		}
 
 		//	render the display
-		gdata->rwindow->clear(sf::Color(255, 255, 255));
+		gdata->rwindow->clear();
+
+		//	background of whatever the previous location was
+		gdata->rwindow->draw(*gdata->bg_sprite);
+		gdata->rwindow->draw(*gdata->fg_sprite);
 
 		//	interface elements
 		gdata->rwindow->draw(*gdata->dialogue_frame_1);
@@ -233,6 +247,8 @@ void dialogueLoop(gamedataPtr gdata, spritePtr npc)
 		gdata->rwindow->draw(*them_txtbox);
 
 		//	dialog options, if any
+		for (auto dline : doptions)
+			gdata->rwindow->draw(*dline);
 		drawButtonList(gdata->rwindow, &buttons, sf::Mouse::getPosition(*gdata->rwindow));
 
 		gdata->rwindow->display();

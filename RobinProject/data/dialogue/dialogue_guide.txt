@@ -1,0 +1,39 @@
+
+A single conversation begins at this tag:
+[DIALOGUE]
+and ends at this tag:
+[END]
+
+Each piece of data consists of a tag and a value, each in quotes, like this:
+	"tag"	"value"
+You can put any kind of whitespace you desire outside the quote marks.
+
+A dialogue must have a unique id anywhere between the start and end tags:
+	"id"	"my_unique_id"
+	
+OPTIONS: The main guts of a conversation. Each option must be enclosed between curly braces, and looks like this:
+
+{
+	"option"	"about_gamers"
+	"title"		"More about gamers"
+	"you"		"Tell me more about gamers."
+	"them"		"Gamers are cool and fun."
+	"them"		"I love gamers."
+	"you"		"Neat."
+}
+
+The "option" tag gives this option an ID, which must be unique to this conversation.
+The "title" is what you see when selecting the option.
+Lines marked "you" are said by the player; lines marked "them" are said by the other participant in the conversation.
+
+
+You can set flags for options by placing this inside:
+	"flag"	"flag_name"
+flag_name can be any of the following:
+	unlocked		(Option is available initially; otherwise it starts locked)
+	lockWhenRead	(Option locks after being read; otherwise you can select it repeatedly)
+	ends 			(The conversation ends when this option is selected)
+	
+You can have options unlocked other options by putting this tag inside:
+	"unlock"		"option_id_to_unlock"
+This will unlock the option with the given ID.

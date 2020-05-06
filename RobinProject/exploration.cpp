@@ -202,7 +202,6 @@ void explorationLoop(gamedataPtr gdata)
 								auto npos = gdata->npcSprites[i]->getPosition();
 
 								//	execute the dialogue
-								loadingscreen(gdata);
 								dialogueLoop(gdata, gdata->npcSprites[i]);
 
 								//	restore the previous position of each sprite upon exiting dialogue
